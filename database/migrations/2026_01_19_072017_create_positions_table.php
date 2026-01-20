@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateExamAnswerSheetsTable extends Migration
+class CreatePositionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateExamAnswerSheetsTable extends Migration
      */
     public function up()
     {
-        Schema::create('exam_answer_sheets', function (Blueprint $table) {
+        Schema::create('positions', function (Blueprint $table) {
             $table->id();
-            $table->integer('question_id');
-            $table->text('answer_text');
+            $table->string('name');
+            $table->integer('department_id');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateExamAnswerSheetsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('exam_answer_sheets');
+        Schema::dropIfExists('positions');
     }
 }

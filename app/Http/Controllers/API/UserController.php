@@ -12,6 +12,8 @@ use Auth;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\User;
+use App\Branch;
+use App\Position;
 use Spatie\Activitylog\Models\Activity;
 
 
@@ -19,17 +21,34 @@ class UserController extends Controller
 {
     public function index()
     {   
-        $users = User::with('roles')->with('roles.permissions')->get();
+        $users = User::with('roles')
+                     ->with('roles.permissions')
+                     ->with('branch')
+                     ->with('position')
+                     ->get();
         $roles = Role::with('permissions')->orderBy('id', 'Asc')->get();
+        $branches = Branch::all();
+        $positions = Position::all();
 
-        return response()->json(['users' => $users, 'roles' => $roles], 200);
+        return response()->json([
+            'users' => $users, 
+            'roles' => $roles, 
+            'branches' => $branches,
+            'positions' => $positions,
+        ], 200);
     }
 
     public function create() 
     {
         $roles = Role::with('permissions')->orderBy('id', 'Asc')->get();
+        $branches = Branch::all();
+        $positions = Position::all();
 
-        return response()->json(['roles' => $roles], 200);
+        return response()->json([
+            'roles' => $roles, 
+            'branches' => $branches,
+            'positions' => $positions,
+        ], 200);
     }
 
     public function store(Request $request)
@@ -45,6 +64,9 @@ class UserController extends Controller
             'password.min' => 'Password must be atleast 8 characters',
             'password.same' => 'Password and Confirm Password did not match',
             'confirm_password.required' => 'Confirm Password is required',
+            'branch_id.required' => 'Branch is required',
+            'branch_id.integer' => 'Branch must be an integer',
+            'position_id.integer' => 'Position must be an integer',
         ];
 
         $valid_fields = [
@@ -52,6 +74,8 @@ class UserController extends Controller
             'email' => 'required|string|email|unique:users,email',
             'password' => 'required|string|min:8|same:confirm_password',
             'confirm_password' => 'required',
+            'branch_id' => 'required|integer',
+            'position_id' => 'nullable|integer',
         ];
 
         $validator = Validator::make($request->all(), $valid_fields, $rules);
@@ -65,10 +89,18 @@ class UserController extends Controller
         $user->name = $request->get('name');
         $user->email = $request->get('email');
         $user->password = Hash::make($request->get('password'));
+        $user->branch_id = $request->get('branch_id');
+        $user->position_id = $request->get('position_id');
         $user->active = $request->get('active');
         $user->save();
 
         $user->assignRole($request->get('roles'));
+
+        $user = User::with('roles')
+                    ->with('roles.permissions')
+                    ->with('branch')
+                    ->with('position')
+                    ->where('id', '=', $user->id)->first();
 
         return response()->json(['success' => 'Record has successfully added', 'user' => $user], 200);
     }
@@ -76,7 +108,7 @@ class UserController extends Controller
     public function edit($user_id)
     {
         $user = User::find($user_id);
-
+       
         //if record is empty then display error page
         if(empty($user->id))
         {
@@ -97,6 +129,9 @@ class UserController extends Controller
 
         $rules = [
             'name.required' => 'Please enter name',
+            'branch_id.required' => 'Branch is required',
+            'branch_id.integer' => 'Branch must be an integer',
+            'position_id.integer' => 'Position must be an integer',
             'password.required' => 'Password is required',
             'password.min' => 'Password must be atleast 8 characters',
             'password.same' => 'Password and Confirm Password did not match',
@@ -105,6 +140,8 @@ class UserController extends Controller
 
         $valid_fields = [
             'name' => 'required|string|max:255',
+            'branch_id' => 'required|integer',
+            'position_id' => 'nullable|integer',
         ];
 
         if($request->get('password') || $request->get('confirm_password'))
@@ -134,6 +171,8 @@ class UserController extends Controller
         {
             $user->password = Hash::make($request->get('password'));
         }
+        $user->branch_id = $request->get('branch_id');
+        $user->position_id = $request->get('position_id');
         $user->active = $request->get('active');
 
         $user->save();
@@ -141,6 +180,12 @@ class UserController extends Controller
         DB::table('model_has_roles')->where('model_id', $user_id)->delete();
         
         $user->assignRole($request->get('roles'));
+
+        $user = User::with('roles')
+                    ->with('roles.permissions')
+                    ->with('branch')
+                    ->with('position')
+                    ->where('id', '=', $user_id)->first();
         
         $user_roles = $user->roles->pluck('name')->all();
 
@@ -150,7 +195,7 @@ class UserController extends Controller
             'success' => 'Record has been updated', 
             'user_roles' => $user_roles, 
             'user_permissions' => $user_permissions,
-            'user' => User::with('roles')->where('id', '=', $user_id)->first()
+            'user' => $user
         ], 200);
     }
 
@@ -202,6 +247,7 @@ class UserController extends Controller
             'user' => $user
         ], 200);
     }
+
 
     public function delete(Request $request)
     {

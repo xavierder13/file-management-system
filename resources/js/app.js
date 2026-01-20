@@ -10,7 +10,7 @@ import VueSocketio from 'vue-socket.io';
 import store from './store';
 import IdleVue from "idle-vue";
 
-Vue.use(VueSocketio, 'http://localhost:4000');
+// Vue.use(VueSocketio, 'http://localhost:4000');
 Vue.use(Vuetify);   
 Vue.use(VuetifyMask);
 Vue.use(Vuelidate);

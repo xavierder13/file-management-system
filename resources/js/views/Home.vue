@@ -6,7 +6,6 @@
         <v-app-bar-nav-icon></v-app-bar-nav-icon>
       </v-btn>
       <v-spacer></v-spacer>
-
       <v-menu offset-y :nudge-width="200">
         <template v-slot:activator="{ on, attrs }">
           <v-btn small rounded v-bind="attrs" v-on="on" color="grey darken-3">
@@ -72,9 +71,7 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-
-      <v-divider></v-divider>
-
+      <v-divider class="mt-0 pt-0"></v-divider>
       <v-list>
         <v-list-item link to="/dashboard">
           <v-list-item-icon>
@@ -82,30 +79,12 @@
           </v-list-item-icon>
           <v-list-item-title>Dashboard</v-list-item-title>
         </v-list-item>
-        <v-list-group
-          no-action
-          v-if="hasPermission('exam-list') || hasPermission('exam-create')"
-        >
-          <!-- List Group Icon-->
-          <v-icon slot="prependIcon">mdi-account-arrow-right-outline</v-icon>
-          <!-- List Group Title -->
-          <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title>Exam Management</v-list-item-title>
-            </v-list-item-content>
-          </template>
-          <!-- List Group Items -->
-          <v-list-item link to="/exam/index" v-if="hasPermission('exam-list')">
-            <v-list-item-content>
-              <v-list-item-title>Exam List</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item link to="/exam/create" v-if="hasPermission('exam-create')">
-            <v-list-item-content>
-              <v-list-item-title>Create New</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-group>
+        <v-list-item link to="/file-explorer" v-if="hasPermission('file-explorer')">
+          <v-list-item-icon>
+            <v-icon>mdi-folder-open</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>File Explorer</v-list-item-title>
+        </v-list-item>
         <v-list-group
           no-action
           v-if="hasPermission('user-list') || hasPermission('user-create')"
@@ -160,6 +139,31 @@
           >
             <v-list-item-content>
               <v-list-item-title>Permission</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item link to="/branch/index" v-if="hasPermission('branch-list') || hasPermission('branch-create')">
+            <v-list-item-content>
+              <v-list-item-title>Branch</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item link to="/company/index" v-if="hasPermission('company-list') || hasPermission('company-create')">
+            <v-list-item-content>
+              <v-list-item-title>Company</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item link to="/position/index" v-if="hasPermission('position-list') || hasPermission('position-create')">
+            <v-list-item-content>
+              <v-list-item-title>Position</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item link to="/department/index" v-if="hasPermission('department-list') || hasPermission('department-create')">
+            <v-list-item-content>
+              <v-list-item-title>Department</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item link to="/division/index" v-if="hasPermission('division-list') || hasPermission('division-create')">
+            <v-list-item-content>
+              <v-list-item-title>Division</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
@@ -315,7 +319,7 @@ export default {
       "Bearer " + localStorage.getItem("access_token");
     this.userRolesPermissions();
     this.getUser();
-    this.websocket();
+    // this.websocket();
 
   },
 };

@@ -70,4 +70,40 @@ class AuthController extends Controller
         
         return response()->json(['success' => 'You have been successfully logged out'], 200);
     }
+
+    public function qrLogin(Request $request)
+    {   
+        $rules = [
+            'email.required' => 'Email is required',
+            'password.required' => 'Password is required',
+        ];
+
+        $valid_fields = [
+            'email' => 'required',
+            'password' => 'required',
+        ];
+
+        $validator = Validator::make($request->all(), $valid_fields, $rules);
+
+        if($validator->fails())
+        {   
+            return response()->json($validator->errors(), 200);
+        }
+
+        $user = Auth::user();
+        $user->last_login = Carbon::now()->toDateTimeString();
+        $user->save();
+        
+        $accessToken = Auth::user()->createToken('qrToken')->accessToken;
+
+        return response()->json([
+            'user' => Auth::user(), 
+            'access_token' => $accessToken,
+            'token_type' => 'Bearer',
+        ], 200);
+
+        // $accessToken->expires_at = Carbon::now()->addWeeks(1);
+        // $accessToken->save();
+        
+    }
 }

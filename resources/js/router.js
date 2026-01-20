@@ -3,8 +3,6 @@ import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Login from './auth/Login.vue';
 import Dashboard from './views/dashboard/Dashboard.vue';
-import ExamCreate from './views/exam/ExamCreate.vue';
-import ExamIndex from './views/exam/ExamIndex.vue';
 import UserIndex from './views/user/UserIndex.vue';
 import UserCreate from './views/user/UserCreate.vue';
 import UserProfile from './views/user/UserProfile.vue';
@@ -12,6 +10,12 @@ import Permission from './views/permission/PermissionIndex.vue';
 import RoleIndex from './views/role/RoleIndex.vue';
 import RoleCreate from './views/role/RoleCreate.vue';
 import RoleView from './views/role/RoleView.vue';
+import BranchIndex from './views/branch/BranchIndex.vue';
+import CompanyIndex from './views/company/CompanyIndex.vue';
+import PositionIndex from './views/position/PositionIndex.vue';
+import DepartmentIndex from './views/department/DepartmentIndex.vue';
+import DivisionIndex from './views/division/DivisionIndex.vue';
+import FileExplorer from './views/file_explorer/FileExplorer.vue';
 import ActivityLogs from './views/activity_logs/ActivityLogs.vue';
 import PageNotFound from './404/PageNotFound.vue';
 import Unauthorize from './401/Unauthorize.vue';
@@ -28,16 +32,6 @@ const routes = [
         path: '/dashboard',
         name: 'dashboard',
         component: Dashboard
-      },
-      {
-        path: '/exam/index',
-        name: 'user.index',
-        component: ExamIndex
-      },
-      {
-        path: '/exam/create',
-        name: 'user.create',
-        component: ExamCreate
       },
       {
         path: '/user/index',
@@ -73,6 +67,36 @@ const routes = [
         path: '/role/view/:roleid',
         name: 'role.view',
         component: RoleView
+      },
+      {
+        path: '/branch/index',
+        name: 'branch.index',
+        component: BranchIndex
+      },
+      {
+        path: '/company/index',
+        name: 'company.index',
+        component: CompanyIndex
+      },
+      {
+        path: '/position/index',
+        name: 'position.index',
+        component: PositionIndex
+      },
+      {
+        path: '/department/index',
+        name: 'department.index',
+        component: DepartmentIndex
+      },
+      {
+        path: '/division/index',
+        name: 'division.index',
+        component: DivisionIndex
+      },
+      {
+        path: '/file-explorer',
+        name: 'file.explorer',
+        component: FileExplorer
       },
       {
         path: '/activity_logs',
@@ -116,7 +140,8 @@ const routes = [
 ];
 
 const router = new Router({
-  routes: routes
+  routes: routes,
+  mode: 'history',
 });
 
 export default router;

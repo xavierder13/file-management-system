@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateExamResultsTable extends Migration
+class CreateUserFilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,14 @@ class CreateExamResultsTable extends Migration
      */
     public function up()
     {
-        Schema::create('exam_results', function (Blueprint $table) {
+        Schema::create('user_files', function (Blueprint $table) {
             $table->id();
-            $table->string('exam_code');
-            $table->integer('exam_id');
-            $table->integer('question_id');
-            $table->text('answer_text');
-            $table->integer('choice_id');  
-            $table->integer('points')->default(0);      
+            $table->integer('branch_id');
+            $table->integer('user_id');
+            $table->string('file_name');
+            $table->string('file_path');
+            $table->string('file_type');
+            $table->string('title');
             $table->timestamps();
         });
     }
@@ -32,6 +32,6 @@ class CreateExamResultsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('exam_results');
+        Schema::dropIfExists('user_files');
     }
 }

@@ -42,115 +42,209 @@
                   <v-icon>mdi-plus</v-icon>
                 </v-btn>
 
-                <v-dialog v-model="dialog" max-width="500px" persistent>
+                <v-dialog v-model="dialog" max-width="1500px" persistent>
                   <v-card>
                     <v-card-title class="mb-0 pb-0">
                       <span class="headline">{{ formTitle }}</span>
                     </v-card-title>
                     <v-divider></v-divider>
-                    <v-card-text>
-                      <v-container>
-                        <v-row>
-                          <v-col class="mt-0 mb-0 pt-0 pb-0">
-                            <v-text-field
-                              name="name"
-                              v-model="editedItem.name"
-                              :error-messages="nameErrors + userError.name"
-                              label="Full Name"
-                              @input="$v.editedItem.name.$touch() + (userError.name = [])"
-                              @blur="$v.editedItem.name.$touch()"
-                              :readonly="editedItem.id == 1 ? true : false"
-                            ></v-text-field>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col class="mt-0 mb-0 pt-0 pb-0">
-                            <v-text-field
-                              name="email"
-                              v-model="editedItem.email"
-                              :error-messages="emailErrors + userError.email"
-                              label="E-mail"
-                              @input="$v.editedItem.email.$touch() + (userError.email = [])"
-                              @blur="$v.editedItem.email.$touch()"
-                              :readonly="
-                                emailReadonly || editedItem.id == 1
-                                  ? true
-                                  : false
-                              "
-                            ></v-text-field>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col class="mt-0 mb-0 pt-0 pb-0">
-                            <v-text-field
-                              name="password"
-                              v-model="password"
-                              :error-messages="passwordErrors + userError.password"
-                              label="Password"
-                              required
-                              @input="$v.password.$touch() + (userError.password = [])"
-                              @blur="$v.password.$touch() + dummyPassword"
-                              @keyup="passwordChange()"
-                              @focus="onFocus()"
-                              type="password"
-                              :readonly="editedItem.id == 1 ? true : false"
-                            ></v-text-field>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col class="mt-0 mb-0 pt-0 pb-0">
-                            <v-text-field
-                              name="confirm_password"
-                              v-model="confirm_password"
-                              :error-messages="confirm_passwordErrors + userError.confirm_password"
-                              label="Confirm Password"
-                              required
-                              @input="$v.confirm_password.$touch() + (userError.confirm_password = [])"
-                              @blur="
-                                $v.confirm_password.$touch() + dummyPassword
-                              "
-                              @keyup="passwordChange()"
-                              @focus="onFocus()"
-                              type="password"
-                              :readonly="editedItem.id == 1 ? true : false"
-                            ></v-text-field>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col class="mt-0 mb-0 pt-0 pb-0">
-                            <v-autocomplete
-                              v-model="editedItem.roles"
-                              :items="roles"
-                              item-text="name"
-                              item-value="name"
-                              label="Roles"
-                              multiple
-                              chips
-                              :readonly="editedItem.id == 1 ? true : false"
-                            >
-                              <template v-slot:selection="data">
-                                <v-chip
-                                  color="secondary"
-                                  v-bind="data.attrs"
-                                  :input-value="data.selected"
-                                  @click="data.select"
-                                >
-                                  {{ data.item.name }}
-                                </v-chip>
-                              </template>
-                            </v-autocomplete>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="2" class="mt-0 mb-0 pt-0 pb-0">
-                            <v-switch
-                              v-model="switch1"
-                              :label="activeStatus"
-                              :readonly="editedItem.id == 1 ? true : false"
-                            ></v-switch>
-                          </v-col>
-                        </v-row>
-                      </v-container>
+                    <v-card-text height="50vh">
+                      <v-row>
+                        <v-col>
+                          <v-row>
+                            <v-col class="my-0 py-0">
+                              <v-text-field
+                                name="name"
+                                v-model="editedItem.name"
+                                :error-messages="nameErrors + userError.name"
+                                label="Full Name"
+                                @input="
+                                  $v.editedItem.name.$touch() +
+                                    (userError.name = [])
+                                "
+                                @blur="$v.editedItem.name.$touch()"
+                                :readonly="editedItem.id == 1 ? true : false"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col class="my-0 py-0">
+                              <v-text-field
+                                name="email"
+                                v-model="editedItem.email"
+                                :error-messages="emailErrors + userError.email"
+                                label="E-mail"
+                                @input="
+                                  $v.editedItem.email.$touch() +
+                                    (userError.email = [])
+                                "
+                                @blur="$v.editedItem.email.$touch()"
+                                :readonly="
+                                  emailReadonly || editedItem.id == 1
+                                    ? true
+                                    : false
+                                "
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col class="my-0 py-0">
+                              <v-text-field
+                                name="password"
+                                v-model="password"
+                                :error-messages="
+                                  passwordErrors + userError.password
+                                "
+                                label="Password"
+                                required
+                                @input="
+                                  $v.password.$touch() + (userError.password = [])
+                                "
+                                @blur="$v.password.$touch() + dummyPassword"
+                                @keyup="passwordChange()"
+                                @focus="onFocus()"
+                                type="password"
+                                :readonly="editedItem.id == 1 ? true : false"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col class="my-0 py-0">
+                              <v-text-field
+                                name="confirm_password"
+                                v-model="confirm_password"
+                                :error-messages="
+                                  confirm_passwordErrors +
+                                  userError.confirm_password
+                                "
+                                label="Confirm Password"
+                                required
+                                @input="
+                                  $v.confirm_password.$touch() +
+                                    (userError.confirm_password = [])
+                                "
+                                @blur="
+                                  $v.confirm_password.$touch() + dummyPassword
+                                "
+                                @keyup="passwordChange()"
+                                @focus="onFocus()"
+                                type="password"
+                                :readonly="editedItem.id == 1 ? true : false"
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <!-- <v-col class="my-0 py-0">
+                              <v-autocomplete
+                                v-model="editedItem.roles"
+                                :items="roles"
+                                label="Roles"
+                                multiple
+                                chips
+                                :readonly="editedItem.id == 1 ? true : false"
+                              >
+                                <template v-slot:selection="data">
+                                  <v-chip
+                                    color="secondary"
+                                    v-bind="data.attrs"
+                                    :input-value="data.selected"
+                                    @click="data.select"
+                                  >
+                                    {{ data.item.name }}
+                                  </v-chip>
+                                </template>
+                              </v-autocomplete>
+                            </v-col> -->
+                            <v-col class="my-0 py-0">
+                              <v-autocomplete
+                                v-model="editedItem.branch_id"
+                                :items="branches"
+                                item-text="name"
+                                item-value="id"
+                                label="Branch"
+                                required
+                                :error-messages="
+                                  branchErrors + userError.branch_id
+                                "
+                                @input="
+                                  $v.editedItem.branch_id.$touch() +
+                                    (userError.branch_id = [])
+                                "
+                                @blur="$v.editedItem.branch_id.$touch()"
+                                :readonly="editedItem.id == 1 ? true : false"
+                              >
+                              </v-autocomplete>
+                            </v-col>
+                            <v-col class="my-0 py-0">
+                              <v-autocomplete
+                                v-model="editedItem.position_id"
+                                :items="positions"
+                                item-text="name"
+                                item-value="id"
+                                label="Position"
+                                :readonly="editedItem.id == 1 ? true : false"
+                              >
+                              </v-autocomplete>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col cols="2" class="my-0 py-0">
+                              <v-switch
+                                v-model="switch1"
+                                :readonly="editedItem.id == 1 ? true : false"
+                                hide-details=""
+                              >
+                                <template v-slot:label>
+                                  <v-chip :color="switch1 ? 'primary' : 'secondary' " class="ml-1 mt-2"> 
+                                    {{ activeStatus }} 
+                                  </v-chip>
+                                </template>
+                              </v-switch>
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                        <v-divider vertical></v-divider>
+                        <v-col cols="5" class="pt-0">
+                          <v-simple-table fixed-header class="pt-0">
+                            <template v-slot:default>
+                              <v-toolbar>
+                                <v-spacer></v-spacer>
+                                <v-text-field
+                                  v-model="search_role"
+                                  append-icon="mdi-magnify"
+                                  label="Search"
+                                  single-line
+                                  hide-details=""
+                                ></v-text-field>
+                                <v-spacer></v-spacer>
+                              </v-toolbar>
+                              <thead>
+                                <tr>
+                                  <th class="pa-2" style="width:10%">  
+                                    <v-checkbox
+                                      v-model="selectAll"
+                                      color="primary"
+                                      class="ma-0 pa-0"
+                                      :indeterminate="indeterminate"
+
+                                    /></th>
+                                  <th class="pa-2" style="width:90%">Role</th>
+                                </tr>
+                              </thead>
+                              <tbody :key="roleComponentKey">
+                                <tr v-for="(role, index) in filteredRoles">
+                                  <td class="pa-2" style="width:10%"> 
+                                    <v-checkbox 
+                                      v-model="editedItem.roles"
+                                      :value="role"
+                                      multiple
+                                      color="primary" 
+                                      class="ma-0 pa-0"
+                                    ></v-checkbox>
+                                  </td>
+                                  <td class="pa-2" style="width:90%"> {{ role }} </td>
+                                </tr>
+                              </tbody>
+                            </template>
+                          </v-simple-table>
+                        </v-col>
+                      </v-row>
                     </v-card-text>
                     <v-divider class="mb-3 mt-0"></v-divider>
                     <v-card-actions class="pa-0">
@@ -186,9 +280,9 @@
                         single-line
                       ></v-text-field>
                       <v-spacer></v-spacer>
+
                       <v-icon @click="closeRolesBreakdown()">mdi-close</v-icon>
                     </v-card-title>
-                    <v-divider></v-divider>
                     <v-card-text>
                       <v-container>
                         <v-data-table
@@ -222,36 +316,12 @@
                                 <v-icon v-if="isOpen">mdi-chevron-up</v-icon>
                                 <v-icon v-else>mdi-chevron-down</v-icon>
                               </v-btn>
-                              <v-chip color="secondary">
+                              <v-chip color="secondary" class="mt-2">
                                 <strong>{{ items[0].role }}</strong>
                               </v-chip>
                             </td>
                           </template>
                         </v-data-table>
-                        <!-- <v-row>
-                          <v-col class="mt-0 mb-0 pt-0 pb-0">
-                            <v-expansion-panels>
-                              <v-expansion-panel
-                                v-for="(role, i) in roles_permissions"
-                                :key="i"
-                              >
-                                <v-expansion-panel-header>
-                                  {{ role.name }}
-                                </v-expansion-panel-header>
-                                <v-expansion-panel-content>
-                                  <v-chip
-                                    color="secondary"
-                                    v-for="(permission, i) in role.permissions"
-                                    :key="i"
-                                    class="ma-1"
-                                  >
-                                    {{ permission.name }}
-                                  </v-chip>
-                                </v-expansion-panel-content>
-                              </v-expansion-panel>
-                            </v-expansion-panels>
-                          </v-col>
-                        </v-row> -->
                       </v-container>
                     </v-card-text>
                     <v-card-actions>
@@ -329,8 +399,34 @@
     </div>
   </div>
 </template>
-<script>
+<style scoped>
+  /* table {
+    width: 100%;
+  } */
 
+  table {
+    width: 100%;
+  }
+
+  thead, tbody, tr, td, th { display: block; }
+
+  tr:after {
+      content: ' ';
+      display: block;
+      visibility: hidden;
+      clear: both;
+  }
+
+  tbody {
+      height: calc(65vh - 135px);
+      overflow-y: auto;
+  }
+
+  tbody td, thead th {
+      float: left;
+  }
+</style>
+<script>
 import axios from "axios";
 import { validationMixin } from "vuelidate";
 import {
@@ -340,17 +436,16 @@ import {
   minLength,
   sameAs,
 } from "vuelidate/lib/validators";
-
-import { mapGetters, mapState } from 'vuex';  
+import { mapState, mapGetters } from "vuex";
 
 export default {
-
   mixins: [validationMixin],
 
   validations: {
     editedItem: {
       name: { required },
       email: { required, email },
+      branch_id: { required },
     },
     password: { required, minLength: minLength(8) },
     confirm_password: { required, sameAsPassword: sameAs("password") },
@@ -363,7 +458,7 @@ export default {
         {
           text: "Home",
           disabled: false,
-          link: "/dashboard",
+          link: "/",
         },
         {
           text: "Users Record",
@@ -371,14 +466,17 @@ export default {
         },
       ],
       search: "",
+      search_role: "",
       search_roles_permissions: "",
       headers: [
         { text: "Full Name", value: "name" },
         { text: "E-mail", value: "email" },
         { text: "Active", value: "active" },
+        { text: "Branch", value: "branch.name" },
+        { text: "Position", value: "position.name" },
         { text: "Last Login", value: "last_login" },
         { text: "Roles", value: "roles" },
-        { text: "Actions", value: "actions", sortable: false, width: "80px" },
+        { text: "Actions", value: "actions", sortable: false, width: "80px"},
       ],
       roles_permissions_headers: [
         { text: "Role", value: "role" },
@@ -391,6 +489,8 @@ export default {
       dialog: false,
       dialogPermission: false,
       users: [],
+      branches: [],
+      positions: [],
       roles: [],
       roles_permissions: [],
       editedIndex: -1,
@@ -398,6 +498,8 @@ export default {
         name: "",
         email: "",
         roles: [],
+        branch_id: "",
+        position_id: "",
         active: "Y",
       },
       defaultItem: {
@@ -406,6 +508,8 @@ export default {
         password: "",
         confirm_password: "",
         roles: [],
+        branch_id: "",
+        position_id: "",
         active: "Y",
       },
       password: "",
@@ -417,7 +521,12 @@ export default {
         email: [],
         password: [],
         confirm_password: [],
-      }
+        branch_id: [],
+        position_id: [],
+      },
+      selectAll: false,
+      indeterminate: false,
+      roleComponentKey: -1,
     };
   },
 
@@ -426,8 +535,14 @@ export default {
       this.loading = true;
       axios.get("/api/user/index").then(
         (response) => {
-          this.users = response.data.users;
-          this.roles = response.data.roles;
+          let data = response.data;
+
+          console.log(data);
+          
+          this.users = data.users;
+          this.roles = data.roles;
+          this.branches = data.branches;
+          this.positions = data.positions;
           this.loading = false;
         },
         (error) => {
@@ -439,15 +554,17 @@ export default {
     editUser(item) {
       this.editedIndex = this.users.indexOf(item);
       this.editedItem = Object.assign({}, item);
+      this.editedItem.roles = item.roles.map(value => value.name);
       this.dialog = true;
       this.emailReadonly = true;
       this.password = "password";
       this.confirm_password = "password";
-      if (item.active == "Y") {
-        this.switch1 = true;
-      } else {
+      this.switch1 = true;
+      if(this.editedItem.active === 'N')
+      {
         this.switch1 = false;
       }
+
     },
 
     deleteUser(user_id) {
@@ -457,7 +574,7 @@ export default {
         (response) => {
           if (response.data.success) {
             // send data to Sockot.IO Server
-            this.$socket.emit("sendData", { action: "user-delete" });
+            // this.$socket.emit("sendData", { action: "user-delete" });
           }
         },
         (error) => {
@@ -527,24 +644,12 @@ export default {
         email: [],
         password: [],
         confirm_password: [],
+        branch_id: [],
       };
 
       if (!this.$v.$error) {
         this.disabled = true;
         this.overlay = true;
-        let roles = [];
-
-        this.editedItem.roles.forEach((value) => {
-          // if value is object with role name
-          if (value.name) {
-            roles.push(value.name);
-          } else {
-            // else get the array of role name
-            roles.push(value);
-          }
-        });
-
-        this.editedItem.roles = roles;
 
         if (this.editedIndex > -1) {
           if (this.passwordHasChanged) {
@@ -559,21 +664,19 @@ export default {
             (response) => {
               if (response.data.success) {
                 // send data to Sockot.IO Server
-                this.$socket.emit("sendData", { action: "user-edit" });
+                // this.$socket.emit("sendData", { action: "user-edit" });
 
                 Object.assign(this.users[this.editedIndex], response.data.user);
                 this.showAlert();
                 this.close();
-              }
-              else 
-              {
-              let errors = response.data;
-              let errorNames = Object.keys(response.data);
+              } else {
+                let errors = response.data;
+                let errorNames = Object.keys(response.data);
 
-              errorNames.forEach((value) => {
-                this.userError[value].push(errors[value]);
-              });
-            }
+                errorNames.forEach((value) => {
+                  this.userError[value].push(errors[value]);
+                });
+              }
               this.overlay = false;
               this.disabled = false;
             },
@@ -594,23 +697,21 @@ export default {
             (response) => {
               if (response.data.success) {
                 // send data to Sockot.IO Server
-                this.$socket.emit("sendData", { action: "user-create" });
+                // this.$socket.emit("sendData", { action: "user-create" });
 
                 this.showAlert();
                 this.close();
 
                 //push recently added data from database
                 this.users.push(response.data.user);
-              }
-              else 
-              {
-              let errors = response.data;
-              let errorNames = Object.keys(response.data);
+              } else {
+                let errors = response.data;
+                let errorNames = Object.keys(response.data);
 
-              errorNames.forEach((value) => {
-                this.userError[value].push(errors[value]);
-              });
-            }
+                errorNames.forEach((value) => {
+                  this.userError[value].push(errors[value]);
+                });
+              }
               this.overlay = false;
               this.disabled = false;
             },
@@ -633,6 +734,16 @@ export default {
       this.editedItem.active = "Y";
       this.passwordHasChanged = false;
       this.switch1 = true;
+      this.userError = {
+        name: [],
+        email: [],
+        password: [],
+        confirm_password: [],
+        branch_id: [],
+      };
+      this.search_role = "";
+      this.selectAll = false;
+      this.indeterminate = false;
     },
     onFocus() {
       if (this.editedIndex > -1 && this.editedItem.id != 1) {
@@ -653,7 +764,6 @@ export default {
       this.dialogPermission = true;
       this.roles_permissions = roles;
     },
-
     closeRolesBreakdown() {
       this.dialogPermission = false;
       this.search_roles_permissions = "";
@@ -674,13 +784,13 @@ export default {
         if (
           action == "user-create" ||
           action == "user-edit" ||
-          action == "user-delete"
+          action == "user-delete" ||
+          action == "login"
         ) {
           this.getUser();
         }
       };
     },
-
   },
   computed: {
     formTitle() {
@@ -739,6 +849,13 @@ export default {
         }
       }
     },
+    branchErrors() {
+      const errors = [];
+      if (!this.$v.editedItem.branch_id.$dirty) return errors;
+      !this.$v.editedItem.branch_id.required &&
+        errors.push("Branch is required.");
+      return errors;
+    },
     rolesBreakdown() {
       let roles_permissions = [];
       let index = 0;
@@ -755,13 +872,54 @@ export default {
 
       return roles_permissions;
     },
-    ...mapState("userRolesPermissions", ["userRoles", "userPermissions"]),
+    filteredRoles() {
+      let search = this.search_role ? this.search_role.toLowerCase() : '';
+      let roles = this.roles.filter((value) => {
+        return value.name.toLowerCase().includes(search);
+      }).map(value => value.name);
+
+      // return default list this.roles if search is null;
+      return search ? roles : this.roles.map(value => value.name);
+    
+    },
     ...mapGetters("userRolesPermissions", ["hasRole", "hasPermission"]),
   },
+  watch: {
+    selectAll()
+    {
+      let roles = this.roles.map(value => value.name) 
+
+      if(this.selectAll)
+      {
+        this.editedItem.roles = roles;
+      }
+      else if(!this.indeterminate && !this.selectAll)
+      {
+        this.editedItem.roles = [];
+      }
+    },
+    "editedItem.roles"() {
+
+      if(this.editedItem.roles.length == this.roles.length && this.editedItem.roles.length != 0)
+      {
+        this.selectAll = true;
+        this.indeterminate = false;
+      }
+      else if(this.editedItem.roles.length > 0 && this.editedItem.roles.length != this.roles.length)
+      {
+        this.indeterminate = true;
+        this.selectAll = false;
+      }
+    },
+    search_role() {
+      this.roleComponentKey += 1;
+    }
+  },
   mounted() {
-    axios.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("access_token");
+    axios.defaults.headers.common["Authorization"] =
+      "Bearer " + localStorage.getItem("access_token");
     this.getUser();
-    this.websocket();
+    // this.websocket();
   },
 };
 </script>
