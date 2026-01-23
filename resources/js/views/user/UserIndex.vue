@@ -432,19 +432,27 @@
   </div>
 </template>
 <style scoped>
-  .qr-box {
-    width: 250px;
-    height: 250px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  
+  table {
+    width: 100%;
   }
 
-  .qr-box svg {
-    width: 220px !important;
-    height: 220px !important;
+  thead, tbody, tr, td, th { display: block; }
+
+  tr:after {
+      content: ' ';
+      display: block;
+      visibility: hidden;
+      clear: both;
+  }
+
+  tbody {
+      height: calc(65vh - 135px);
+      overflow-y: auto;
+  }
+
+  tbody td, thead th {
+      float: left;
   }
 </style>
 <script>
