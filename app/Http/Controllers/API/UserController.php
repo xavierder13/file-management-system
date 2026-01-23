@@ -16,7 +16,6 @@ use App\Branch;
 use App\Position;
 use Spatie\Activitylog\Models\Activity;
 
-
 class UserController extends Controller
 {
     public function index()
@@ -281,4 +280,86 @@ class UserController extends Controller
             'user_permissions' => $user_permissions,
         ], 200);
     }
+
+    public function generateQrToken(Request $request)
+    {
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:users,id', // ensure the user exists
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        // Get the selected user
+        $user = User::find($request->id);
+
+        // Create Passport QR token
+        $tokenResult = $user->createToken('qrToken');
+        $accessToken = $tokenResult->accessToken;
+        $tokenModel  = $tokenResult->token;
+
+        // $tokenModel->expires_at = now()->addMinutes(10);
+        $tokenModel->save();
+
+        // Check if a qrToken already exists and is not expired
+        $existingToken = $user->tokens()
+                                ->where('name', 'qrToken')
+                                ->where(function($query) {
+                                    $query->whereNull('expires_at')
+                                        ->orWhere('expires_at', '>', now());
+                                })
+                                ->latest() // get the latest one
+                                ->first();
+
+        // Upload page URL
+        $uploadUrl = config('app.url') . '/file-upload/' . $existingToken->id;
+
+        
+
+        return response()->json([
+            'qr_url' => $uploadUrl,
+            'expires_at' => $tokenModel->expires_at,
+        ]);
+    }
+
+    public function viewQrToken(Request $request)
+    {
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:users,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        $user = User::find($request->id);
+
+        // Check if a qrToken already exists and is not expired
+        $existingToken = $user->tokens()
+            ->where('name', 'qrToken')
+            ->where(function($query) {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            })
+            ->latest() // get the latest one
+            ->first();
+
+        if (!$existingToken) {
+            // No QR token exists
+            return response()->json(['qr_url' => null]);
+        }
+
+        // Build QR upload URL
+        $uploadUrl = config('app.url') . '/file-upload/' . $existingToken->id;
+
+        return response()->json([
+            'qr_url' => $uploadUrl,
+            'expires_at' => $existingToken->expires_at,
+        ]);
+    }
+
+
 }

@@ -15,7 +15,8 @@ import CompanyIndex from './views/company/CompanyIndex.vue';
 import PositionIndex from './views/position/PositionIndex.vue';
 import DepartmentIndex from './views/department/DepartmentIndex.vue';
 import DivisionIndex from './views/division/DivisionIndex.vue';
-import FileExplorer from './views/file_explorer/FileExplorer.vue';
+import FileExplorer from './views/file_management/FileExplorer.vue';
+import FileUpload from './views/file_management/FileUpload.vue';
 import ActivityLogs from './views/activity_logs/ActivityLogs.vue';
 import PageNotFound from './404/PageNotFound.vue';
 import Unauthorize from './401/Unauthorize.vue';
@@ -136,6 +137,11 @@ const routes = [
   {
     path: '*',
     component: PageNotFound,
+  },
+  {
+    path: '/file-upload/:token',
+    name: 'file.upload',
+    component: FileUpload
   },
 ];
 

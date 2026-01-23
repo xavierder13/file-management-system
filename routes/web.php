@@ -13,9 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Auth::routes();
+Route::get('/404', function () {
+    return view('404.page_not_found');
+});
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/401', function () {
+    return view('401.unauthorized');
+});
 
 Route::get('/{any}', function () {
     return view('layouts.app');

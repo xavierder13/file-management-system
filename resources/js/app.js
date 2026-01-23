@@ -9,6 +9,11 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 import VueSocketio from 'vue-socket.io';
 import store from './store';
 import IdleVue from "idle-vue";
+import apiBaseUrl from '../js/apiBaseUrl';
+
+
+
+Vue.prototype.$apiBaseUrl = apiBaseUrl;   // <-- GLOBAL PROPERTY
 
 // Vue.use(VueSocketio, 'http://localhost:4000');
 Vue.use(Vuetify);   

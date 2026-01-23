@@ -370,6 +370,14 @@
               <v-icon
                 small
                 class="mr-2"
+                color="secondary"
+                @click="viewQrCode(item)"
+              >
+                mdi-qrcode-scan
+              </v-icon>
+              <v-icon
+                small
+                class="mr-2"
                 color="green"
                 @click="editUser(item)"
                 v-if="hasPermission('user-edit') && item.id != 1"
@@ -395,35 +403,48 @@
             </template>
           </v-data-table>
         </v-card>
+        <!-- QR Code Dialog -->
+        <v-dialog v-model="dialog_qr_code" max-width="400">
+          <v-card>
+            <v-card-title class="pa-4">
+              <span class="headline">QR Code</span>
+              <v-spacer></v-spacer>
+              <v-icon @click="dialog_qr_code = false">mdi-close</v-icon>
+            </v-card-title>
+
+            <v-card-text class="text-center">
+              <!-- QR code SVG -->
+
+              <div v-if="qr_code" ref="qrContainer" v-html="qr_code" :key="qrComponentKey"></div>
+              <div v-if="!qr_code" style="display: inline-block; width: 350px; height: 300px; border: 1px solid #ccc; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <span style="color: #999;" class="font-weight-bold subtitle-1">Please generate QR Code</span>
+              </div>
+            </v-card-text>
+
+            <v-card-actions class="justify-center">
+              <v-btn class="mb-2" outlined color="primary" @click="generateQrCode()">Generate</v-btn>
+              <v-btn class="mb-2" color="primary" @click="downloadQrCode()">Download</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-main>
     </div>
   </div>
 </template>
 <style scoped>
-  /* table {
-    width: 100%;
-  } */
-
-  table {
-    width: 100%;
+  .qr-box {
+    width: 250px;
+    height: 250px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  thead, tbody, tr, td, th { display: block; }
-
-  tr:after {
-      content: ' ';
-      display: block;
-      visibility: hidden;
-      clear: both;
-  }
-
-  tbody {
-      height: calc(65vh - 135px);
-      overflow-y: auto;
-  }
-
-  tbody td, thead th {
-      float: left;
+  .qr-box svg {
+    width: 220px !important;
+    height: 220px !important;
   }
 </style>
 <script>
@@ -437,6 +458,7 @@ import {
   sameAs,
 } from "vuelidate/lib/validators";
 import { mapState, mapGetters } from "vuex";
+import QRCode from 'qrcode';
 
 export default {
   mixins: [validationMixin],
@@ -476,7 +498,7 @@ export default {
         { text: "Position", value: "position.name" },
         { text: "Last Login", value: "last_login" },
         { text: "Roles", value: "roles" },
-        { text: "Actions", value: "actions", sortable: false, width: "80px"},
+        { text: "Actions", value: "actions", sortable: false, width: "120px"},
       ],
       roles_permissions_headers: [
         { text: "Role", value: "role" },
@@ -527,6 +549,12 @@ export default {
       selectAll: false,
       indeterminate: false,
       roleComponentKey: -1,
+      dialog_qr_code: false,
+      userItem: {},
+      qr_code: "",
+      qr_url: "",
+      qr_expiration: "",
+      qrComponentKey: 1,
     };
   },
 
@@ -744,6 +772,9 @@ export default {
       this.search_role = "";
       this.selectAll = false;
       this.indeterminate = false;
+      this.qr_code = "";
+      this.qr_url = "";
+      this.qrComponentKey += 1;
     },
     onFocus() {
       if (this.editedIndex > -1 && this.editedItem.id != 1) {
@@ -768,7 +799,84 @@ export default {
       this.dialogPermission = false;
       this.search_roles_permissions = "";
     },
+    async viewQrCode(item) {
+      this.dialog_qr_code = true;
+      this.userItem = Object.assign({}, item);
+      this.qr_code = ''; 
+      try {
+        const response = await axios.post('/api/user/view-qr-token', this.userItem);
+        this.qr_url = response.data.qr_url;
 
+        if(this.qr_url)
+        {
+          // Generate SVG QR code
+          this.qr_code = await QRCode.toString(this.qr_url, {
+            type: 'svg',
+            errorCorrectionLevel: 'H',
+          });
+        } 
+
+      } catch (error) {
+        console.error('Error generating QR code:', error);
+      }
+    },
+    async generateQrCode() {
+      const generateQr = async () => {
+        try {
+          const response = await axios.post('/api/user/generate-qr-token', this.userItem);
+          console.log(response.data);
+          
+          this.qr_url = await response.data.qr_url;
+  
+          // Generate SVG QR code
+          this.qr_code = await QRCode.toString(this.qr_url, {
+            type: 'svg',
+            errorCorrectionLevel: 'H',
+          });
+
+          // this.qr_code = await QRCode.toString('http://file-management-system.test/file-upload/asdadsadasdadsadasdadsadasdadsadagfhgfhgfhsrwqewreatyuiyoyut23768565sdadsadasdadsadasdadsadasdadsadasdadsadasdadsadasdadsadasdadsad', {
+          //   type: 'svg',
+          //   errorCorrectionLevel: 'H',
+          //   scale: 6,  // each module is 6px
+          // });
+
+        } catch (error) {
+          console.error('Error generating QR code:', error);  
+        }
+      };
+
+      if (this.qr_code) { 
+        // Ask for confirmation
+        const result = await this.$swal({
+          title: "Are you sure?",
+          text: "Generating a new QR code will invalidate the old one.",
+          icon: "warning",
+          showCancelButton: true,
+          cancelButtonColor: "#6c757d",
+          confirmButtonColor: "#1976d2", 
+          confirmButtonText: "Yes, generate",
+        });
+
+        if (result.isConfirmed) {
+          await generateQr();
+        }
+      } else {
+        // No existing QR code, just generate
+        await generateQr();
+      }
+    },
+    // Download the QR code as an SVG file
+    downloadQrCode() {
+      if (!this.qr_code) return;
+
+      const blob = new Blob([this.qr_code], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'qr-code.svg';
+      link.click();
+      URL.revokeObjectURL(url);
+    },
     isUnauthorized(error) {
       // if unauthenticated (401)
       if (error.response.status == "401") {

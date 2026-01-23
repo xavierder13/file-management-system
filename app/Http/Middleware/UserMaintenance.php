@@ -56,6 +56,20 @@ class UserMaintenance
             return $next($request); 
         }
 
+        //Generate Token
+        if($request->is('api/user/generate-qr-token')){
+            if($user->can('qr-token-create')){
+                return $next($request); 
+            }
+        }
+
+        //View Token
+        if($request->is('api/user/view-qr-token')){
+            if($user->can('qr-token-create')){
+                return $next($request); 
+            }
+        }
+
         return abort(401, 'Unauthorized');
 
     }

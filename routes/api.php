@@ -83,6 +83,21 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:api', 'token.type:authT
         'as' => 'user.roles_permissions',
     ]);
 
+    Route::post('/generate-qr-token', [
+        'uses' => 'API\UserController@generateQrToken',
+        'as' => 'user.generate.qr.token',
+    ]);
+
+    Route::post('/view-qr-token', [
+        'uses' => 'API\UserController@viewQrToken',
+        'as' => 'user.view.qr.token',
+    ]);
+
+    Route::get('/download-qr', [
+        'uses' => 'API\UserController@download_qr',
+        'as' => 'user.download.qr.code',
+    ]);
+
 });
 
 //Exam 
@@ -383,24 +398,44 @@ Route::group(['prefix' => 'division', 'middleware' => ['auth:api', 'division.mai
     ]);
 });
 
-// Division Routes
-Route::group(['prefix' => 'file-explorer', 'middleware' => ['auth:api']], function () {
-    Route::get('/', [
+// File Explorer Routes
+Route::group(['prefix' => 'file-manager', 'middleware' => ['auth:api']], function () {
+    Route::get('/index', [
         'uses' => 'API\FileManagerController@index',
         'as' => 'file.manager.index',
+    ]);
+
+    Route::post('/file-upload', [
+        'uses' => 'API\FileManagerController@file_upload',
+        'as' => 'file.manager.file.upload',
+    ]);
+
+    Route::post('/file-delete', [
+        'uses' => 'API\FileManagerController@file_delete',
+        'as' => 'file.manager.file.delete',
+    ]);
+
+});
+
+Route::middleware(['token.type:qrToken'])
+->post('/file-upload', [
+    'uses' => 'API\FileManagerController@file_upload',
+    'as' => 'file.upload',
+]);
+
+// validate token
+Route::group(['prefix' => '/validate-token/{token}', 'middleware' => ['auth:api', 'token.type:authToken']], function(){
+     Route::get('/index', [
+        'uses' => 'API\FileManagerController@validateToken',
+        'as' => 'file.manager.validateToken', 
     ]);
 });
 
 //Activity Logs
-Route::group(['prefix' => 'activity_logs', 'middleware' => ['auth:api', 'token.type:authToken', 'activity.logs']], function(){
+Route::group(['prefix' => 'activity_logs', 'middleware' => ['auth:api', 'activity.logs']], function(){
     Route::get('/index', [
         'uses' => 'API\ActivityLogController@activity_logs',
         'as' => 'activity_logs.index',
     ]);
     
-});
-
-Route::middleware(['auth:api', 'token.type:authToken'])
-->get('/validate-token', function() {
-    return 'Welcome QR user!';
 });
