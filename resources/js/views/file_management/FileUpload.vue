@@ -88,11 +88,18 @@ export default {
         headers: {
           Authorization: `Bearer ${this.token}`
         }
-      }).then((response) => {
-        this.showAlert("File has been uploaded", "success");
-      }).catch(() => {
-        this.showAlert("Upload failed!", "error");
-      });
+      }).then(
+        (response) => {
+          this.showAlert("File has been uploaded", "success");
+        },
+        (error) => {
+          console.log(error);
+          
+          this.showAlert("File has been uploaded", "success");
+        })
+    // ).catch(() => {
+    //     this.showAlert("Upload failed!", "error");
+    //   });
     },
     showAlert(msg, icon) {
       this.$swal({

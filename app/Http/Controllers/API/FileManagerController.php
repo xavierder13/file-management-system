@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\File;
 use App\UserFile;
 use App\User;
 use Carbon\Carbon;
-
+use DB;
 class FileManagerController extends Controller
 {
     public function index()
@@ -18,9 +18,17 @@ class FileManagerController extends Controller
         return response()->json(['user_files' => $user_files], 200);
     }
 
-    public function store(Request $request)
+    public function file_upload(Request $request)
     {   
-        // return $request;
+        // validate token
+        $tokenResponse = $this->validateToken($request->token);
+
+        // $tokenResponse is already a JsonResponse
+        // If validation fails, just return it
+        if ($tokenResponse->getStatusCode() != 200) {
+            return $tokenResponse;
+        }
+
         try {
             $file = $request->file('file');
             $file_extension = $file->getClientOriginalExtension();

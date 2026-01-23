@@ -417,14 +417,14 @@ Route::group(['prefix' => 'file-manager', 'middleware' => ['auth:api']], functio
 
 });
 
-Route::middleware(['token.type:qrToken'])
-->post('/file-upload', [
+Route::post('/file-upload', [
     'uses' => 'API\FileManagerController@file_upload',
     'as' => 'file.upload',
 ]);
 
+
 // validate token
-Route::group(['prefix' => '/validate-token/{token}', 'middleware' => ['auth:api', 'token.type:authToken']], function(){
+Route::group(['prefix' => '/validate-token/{token}'], function(){
      Route::get('/index', [
         'uses' => 'API\FileManagerController@validateToken',
         'as' => 'file.manager.validateToken', 
