@@ -14,8 +14,8 @@ class AddFieldsToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer('branch_id');
-            $table->integer('position_id');
+            $table->integer('branch_id')->nullable();
+            $table->integer('position_id')->nullable();
         });
     }
 
