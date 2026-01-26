@@ -9,11 +9,16 @@ use App\UserFile;
 use App\User;
 use Carbon\Carbon;
 use DB;
+use Validator;
 class FileManagerController extends Controller
 {
     public function index()
     {   
-        $user_files = UserFile::all();
+        $user_files = UserFile::all()->map(function ($file) {
+            $file->date_modified = $file->updated_at
+                ->format('d/m/Y h:i A');
+            return $file;
+        });
 
         return response()->json(['user_files' => $user_files], 200);
     }
@@ -22,12 +27,17 @@ class FileManagerController extends Controller
     {   
         // validate token
         $tokenResponse = $this->validateToken($request->token);
-
+        
         // $tokenResponse is already a JsonResponse
         // If validation fails, just return it
         if ($tokenResponse->getStatusCode() != 200) {
             return $tokenResponse;
         }
+
+        $data = $tokenResponse->getData(true);
+
+        $user_id   = $data['user_id'] ?? '';    // returns the value or '' if key doesn't exist
+        $branch_id = $data['branch_id'] ?? '';  // same
 
         try {
             $file = $request->file('file');
@@ -35,22 +45,26 @@ class FileManagerController extends Controller
 
             $validator = Validator::make(
                 [       
-                    'applicant_id' => $request->applicant_id,
+                    'user_id' => $user_id,
+                    'branch_id' => $branch_id,
                     'file_ext' => strtolower($file_extension),
                     'file' => $file,
                 ],
                 [   
-                    'applicant_id' => 'required|integer',
-                    'file_ext' => 'required|in:jpeg,jpg,png,docs,docx,pdf',
+                    'user_id' => 'required|integer',
+                    'branch_id' => 'required|integer',
+                    'file_ext' => 'required|in:jpeg,jpg,png,docs,docx,pdf,xls,xlsx,ods,csv',
                     'file' => 'required|max: 20800'
                 ], 
                 [   
-                    'applicant_id.required' => 'Applicant ID is required',
-                    'applicant_id.integer' => 'Applicant ID must be an integer',
+                    'user_id.required' => 'User ID is required',
+                    'user_id.integer' => 'User ID must be an integer',
+                    'branch_id.required' => 'Branch ID is required',
+                    'branch_id.integer' => 'Branch ID must be an integer',
                     'file.required' => 'File is required',
                     'file.max' => 'File size maximum is 20MB,',
                     'file_ext.required' => 'File extension is required',
-                    'file_ext.in' => 'File type must be jpeg, jpg, png, docs, docx or pdf.',
+                    'file_ext.in' => 'File type must be jpeg, jpg, png, docs, docx, ods, csv, xlsx, pdf.',
                 ]
             );  
             
@@ -68,16 +82,15 @@ class FileManagerController extends Controller
             $file_name = time().$uploadedFile->getClientOriginalName();
             $file_path = '/wysiwyg/user_files/' . $file_date;
 
-
             $uploadedFile->move(public_path() . $file_path, $file_name);
             
             $user_file = new UserFile();
-            $user_file->user_id = $request->user_id;
-            $user_file->branch_id = $request->branch_id;
+            $user_file->user_id = $user_id;
+            $user_file->branch_id = $branch_id;
             $user_file->file_name = $file_name;
             $user_file->file_path = $file_path;
             $user_file->file_type = $file_extension;
-            $user_file->title = $request->document_type;
+            $user_file->title = "User's File";
             $user_file->save();
 
             return response()->json(['success' => 'File has been uploaded', 'user_file' => $user_file], 200);
@@ -86,6 +99,28 @@ class FileManagerController extends Controller
                 
             return response()->json(['error' => $e->getMessage()], 200);
         }
+    }
+
+    public function file_download($id)
+    {
+        try {
+
+				$file = UserFile::find($id);
+
+				$title = $file->title; 
+				$file_path = $file->file_path;    
+				$file_name = $file->file_name;
+				$file_type = $file->file_type;
+
+				$file = public_path() . $file_path . "/" . $file_name;
+				$headers = array('Content-Type: application/' . $file_type,);
+
+				return response()->download($file, $title . '.' . $file_type, $headers);
+
+		} catch (\Exception $e) {
+				
+				return response()->json(['error' => $e->getMessage()], 200);
+		}
     }
 
     public function delete(Request $request)

@@ -410,6 +410,11 @@ Route::group(['prefix' => 'file-manager', 'middleware' => ['auth:api']], functio
         'as' => 'file.manager.file.upload',
     ]);
 
+    Route::post('/file-download/{id}', [
+        'uses' => 'API\FileManagerController@file_download',
+        'as' => 'file.manager.file.download',
+    ]);
+
     Route::post('/file-delete', [
         'uses' => 'API\FileManagerController@file_delete',
         'as' => 'file.manager.file.delete',

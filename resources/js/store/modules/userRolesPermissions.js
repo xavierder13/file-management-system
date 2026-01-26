@@ -1,6 +1,7 @@
 
 import axios from 'axios';
 import router from '../../router';
+import apiBaseUrl from '../../apiBaseUrl';
 
 const state = {
   permissions: [],
@@ -28,7 +29,7 @@ const getters = {
 
 const actions = {
   async userRolesPermissions({ commit }) {
-    let response = await axios.get("/api/user/roles_permissions").then((response) => {
+    let response = await axios.get(apiBaseUrl + "/api/user/roles_permissions").then((response) => {
       commit('setUserRoles', response.data.user_roles);
       commit('setUserPermissions', response.data.user_permissions);
 

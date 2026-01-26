@@ -163,7 +163,7 @@ export default {
   methods: {
     getPermission() {
       this.loading = true;
-      axios.get("/api/permission/index").then(
+      axios.get(this.$apiBaseUrl + "/api/permission/index").then(
         (response) => {
           this.permissions = response.data.permissions;
           this.loading = false;
@@ -183,7 +183,7 @@ export default {
     deletePermission(permissionid) {
       const data = { permissionid: permissionid };
       this.loading = true;
-      axios.post("/api/permission/delete", data).then(
+      axios.post(this.$apiBaseUrl + "/api/permission/delete", data).then(
         (response) => {
           if (response.data.success) {
             // send data to Sockot.IO Server
@@ -265,7 +265,7 @@ export default {
           const data = this.editedPermission;
           const permissionid = this.editedPermission.id;
 
-          axios.post("/api/permission/update/" + permissionid, data).then(
+          axios.post(this.$apiBaseUrl + "/api/permission/update/" + permissionid, data).then(
             (response) => {
               if (response.data.success) {
                 // send data to Sockot.IO Server
@@ -299,7 +299,7 @@ export default {
         } else {
           const data = this.editedPermission;
 
-          axios.post("/api/permission/store", data).then(
+          axios.post(this.$apiBaseUrl + "/api/permission/store", data).then(
             (response) => {
               
               if (response.data.success) {

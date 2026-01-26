@@ -170,7 +170,7 @@ export default {
         roleid: this.roleid,
       };
 
-      axios.post("/api/role/edit", data).then(
+      axios.post(this.$apiBaseUrl + "/api/role/edit", data).then(
         (response) => {
           // console.log(response.data);
           this.editedItem = response.data.role;
@@ -219,7 +219,7 @@ export default {
         const data = { name: this.editedItem.name, permission: this.permission};
         const roleid = this.editedItem.id;
 
-        axios.post("/api/role/update/" + roleid, data).then(
+        axios.post(this.$apiBaseUrl + "/api/role/update/" + roleid, data).then(
           (response) => {
             if (response.data.success) {
               // send data to Sockot.IO Server

@@ -569,7 +569,7 @@ export default {
   methods: {
     getUser() {
       this.loading = true;
-      axios.get("/api/user/index").then(
+      axios.get(this.$apiBaseUrl + "/api/user/index").then(
         (response) => {
           let data = response.data;
 
@@ -606,7 +606,7 @@ export default {
     deleteUser(user_id) {
       const data = { user_id: user_id };
 
-      axios.post("/api/user/delete", data).then(
+      axios.post(this.$apiBaseUrl + "/api/user/delete", data).then(
         (response) => {
           if (response.data.success) {
             // send data to Sockot.IO Server
@@ -696,7 +696,7 @@ export default {
           const data = this.editedItem;
           const user_id = this.editedItem.id;
 
-          axios.post("/api/user/update/" + user_id, data).then(
+          axios.post(this.$apiBaseUrl + "/api/user/update/" + user_id, data).then(
             (response) => {
               if (response.data.success) {
                 // send data to Sockot.IO Server
@@ -729,7 +729,7 @@ export default {
 
           const data = this.editedItem;
 
-          axios.post("/api/user/store", data).then(
+          axios.post(this.$apiBaseUrl + "/api/user/store", data).then(
             (response) => {
               if (response.data.success) {
                 // send data to Sockot.IO Server
@@ -812,7 +812,7 @@ export default {
       this.userItem = Object.assign({}, item);
       this.qr_code = ''; 
       try {
-        const response = await axios.post('/api/user/view-qr-token', this.userItem);
+        const response = await axios.post(this.$apiBaseUrl + '/api/user/view-qr-token', this.userItem);
         this.qr_url = response.data.qr_url;
 
         if(this.qr_url)
@@ -831,7 +831,7 @@ export default {
     async generateQrCode() {
       const generateQr = async () => {
         try {
-          const response = await axios.post('/api/user/generate-qr-token', this.userItem);
+          const response = await axios.post(this.$apiBaseUrl + '/api/user/generate-qr-token', this.userItem);
           console.log(response.data);
           
           this.qr_url = await response.data.qr_url;

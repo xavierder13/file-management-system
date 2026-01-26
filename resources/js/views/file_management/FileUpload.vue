@@ -50,7 +50,7 @@ export default {
 
   methods: {
     validateToken() {
-      axios.get(`/api/validate-token/${this.token}`)
+      axios.get(this.$apiBaseUrl + `/api/validate-token/${this.token}`)
         .then(res => {
           this.valid = true;
           this.user_id = res.data.user_id;
@@ -81,21 +81,25 @@ export default {
     upload() {
       let form = new FormData();
       form.append("file", this.file);
-      form.append("user_id", this.user_id);
-      form.append("branch_id", this.branch_id);
+      form.append("token", this.token);
 
-      axios.post("/api/file-upload", form, {
-        headers: {
-          Authorization: `Bearer ${this.token}`
-        }
-      }).then(
+      axios.post(this.$apiBaseUrl + "/api/file-upload", form).then(
         (response) => {
-          this.showAlert("File has been uploaded", "success");
+          console.log(response);
+          if(response.data.success)
+          {
+            this.showAlert("File has been uploaded", "success");
+          }
+          else
+          {
+            this.showAlert("Error uploading file", "error");
+          }
+          
         },
         (error) => {
           console.log(error);
           
-          this.showAlert("File has been uploaded", "success");
+          this.showAlert("Error uploading file", "error");
         })
     // ).catch(() => {
     //     this.showAlert("Upload failed!", "error");

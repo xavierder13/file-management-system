@@ -17,7 +17,7 @@
             <v-row>
               <v-col
                 ><img
-                  src="/img/default-profile.png"
+                  :src="$apiBaseUrl + '/img/default-profile.png'"
                   width="120px"
                   height="100px"
                   alt="User"
@@ -63,7 +63,7 @@
       <v-list>
         <v-list-item class="px-2">
           <v-list-item-avatar class="rounded-5" height="60" width="60">
-            <v-img src="/img/default-profile.png"></v-img>
+            <v-img :src="$apiBaseUrl + '/img/default-profile.png'"></v-img>
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title> ADDESSA File Manager</v-list-item-title>

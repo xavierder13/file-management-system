@@ -209,7 +209,7 @@ export default {
   methods: {
     getBranch() {
       this.loading = true;
-      axios.get("/api/branch/index").then(
+      axios.get(this.$apiBaseUrl + "/api/branch/index").then(
         (response) => {
           console.log(response.data);
           this.branches = response.data.branches;
@@ -231,7 +231,7 @@ export default {
     deleteBranch(branch_id) {
       const data = { branch_id: branch_id };
       this.loading = true;
-      axios.post("/api/branch/delete", data).then(
+      axios.post(this.$apiBaseUrl + "/api/branch/delete", data).then(
         (response) => {
           if (response.data.success) {
             // send data to Sockot.IO Server
@@ -313,7 +313,7 @@ export default {
           const data = this.editedItem;
           const branch_id = this.editedItem.id;
 
-          axios.post("/api/branch/update/" + branch_id, data).then(
+          axios.post(this.$apiBaseUrl + "/api/branch/update/" + branch_id, data).then(
             (response) => {
               if (response.data.success) {
                 // send data to Sockot.IO Server
@@ -341,7 +341,7 @@ export default {
         } else {
           const data = this.editedItem;
 
-          axios.post("/api/branch/store", data).then(
+          axios.post(this.$apiBaseUrl + "/api/branch/store", data).then(
             (response) => {
               if (response.data.success) {
                 // send data to Sockot.IO Server

@@ -230,7 +230,7 @@ export default {
   methods: {
     getCompany() {
       this.loading = true;
-      axios.get("/api/company/index").then(
+      axios.get(this.$apiBaseUrl + "/api/company/index").then(
         (response) => {
           this.companies = response.data.companies;
           this.loading = false;
@@ -255,7 +255,7 @@ export default {
     deleteCompany(company_id) {
       const data = { company_id: company_id };
       this.loading = true;
-      axios.post("/api/company/delete", data).then(
+      axios.post(this.$apiBaseUrl + "/api/company/delete", data).then(
         (response) => {
           if (response.data.success) {
             // send data to Sockot.IO Server
@@ -336,7 +336,7 @@ export default {
           const data = this.editedItem;
           const company_id = this.editedItem.id;
 
-          axios.post("/api/company/update/" + company_id, data).then(
+          axios.post(this.$apiBaseUrl + "/api/company/update/" + company_id, data).then(
             (response) => {
               if (response.data.success) {
                 // send data to Sockot.IO Server
@@ -367,7 +367,7 @@ export default {
         } else {
           const data = this.editedItem;
 
-          axios.post("/api/company/store", data).then(
+          axios.post(this.$apiBaseUrl + "/api/company/store", data).then(
             (response) => {
               if (response.data.success) {
                 // send data to Sockot.IO Server

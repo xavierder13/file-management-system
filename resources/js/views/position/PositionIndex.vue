@@ -227,7 +227,7 @@ export default {
   methods: {
     getPosition() {
       this.loading = true;
-      axios.get("/api/position/index").then(
+      axios.get(this.$apiBaseUrl + "/api/position/index").then(
         (response) => {
           this.loading = false;
           let data = response.data;
@@ -261,7 +261,7 @@ export default {
     deletePosition(position_id) {
       const data = { position_id: position_id };
       this.loading = true;
-      axios.post("/api/position/delete", data).then(
+      axios.post(this.$apiBaseUrl + "/api/position/delete", data).then(
         (response) => {
           if (response.data.success) {
             // send data to Sockot.IO Server
@@ -352,7 +352,7 @@ export default {
           api = "/api/position/store";
         }
 
-        axios.post(api, data).then(
+        axios.post(this.$apiBaseUrl + api, data).then(
           (response) => {
             
             this.disabled = false;

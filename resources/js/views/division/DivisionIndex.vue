@@ -186,7 +186,7 @@ export default {
   methods: {
     getDivision() {
       this.loading = true;
-      axios.get("/api/division/index").then(
+      axios.get(this.$apiBaseUrl + "/api/division/index").then(
         (response) => {
           this.divisions = response.data.divisions;
           this.loading = false;
@@ -213,7 +213,7 @@ export default {
     deleteDivision(division_id) {
       const data = { division_id: division_id };
 
-      axios.post("/api/division/delete", data).then(
+      axios.post(this.$apiBaseUrl + "/api/division/delete", data).then(
         (response) => {
           // console.log(response.data);
           if (response.data.success) {
@@ -295,7 +295,7 @@ export default {
           const data = this.editedItem;
           const division_id = this.editedItem.id;
 
-          axios.post("/api/division/update/" + division_id, data).then(
+          axios.post(this.$apiBaseUrl + "/api/division/update/" + division_id, data).then(
             (response) => {
               if (response.data.success) {
                 // send data to Socket.IO Server
@@ -329,7 +329,7 @@ export default {
         } else {
           const data = this.editedItem;
 
-          axios.post("/api/division/store", data).then(
+          axios.post(this.$apiBaseUrl + "/api/division/store", data).then(
             (response) => {
               if (response.data.success) {
                 // send data to Socket.IO Server

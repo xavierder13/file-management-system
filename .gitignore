@@ -3,6 +3,8 @@
 /public/css
 /public/hot
 /public/storage
+/public/wysiwyg
+/public/user_files
 /storage/*.key
 /storage/debugbar
 /storage/framework/*

@@ -208,7 +208,7 @@ export default {
   methods: {
     getDepartment() {
       this.loading = true;
-      axios.get("/api/department/index").then(
+      axios.get(this.$apiBaseUrl + "/api/department/index").then(
         (response) => {
           this.departments = response.data.departments;
           this.divisions = response.data.divisions;
@@ -237,7 +237,7 @@ export default {
     deleteDepartment(department_id) {
       const data = { department_id: department_id };
 
-      axios.post("/api/department/delete", data).then(
+      axios.post(this.$apiBaseUrl + "/api/department/delete", data).then(
         (response) => {
           // console.log(response.data);
           if (response.data.success) {
@@ -320,7 +320,7 @@ export default {
           const data = this.editedItem;
           const department_id = this.editedItem.id;
 
-          axios.post("/api/department/update/" + department_id, data).then(
+          axios.post(this.$apiBaseUrl + "/api/department/update/" + department_id, data).then(
             (response) => {
               if (response.data.success) {
                 // send data to Socket.IO Server
@@ -355,7 +355,7 @@ export default {
         } else {
           const data = this.editedItem;
 
-          axios.post("/api/department/store", data).then(
+          axios.post(this.$apiBaseUrl + "/api/department/store", data).then(
             (response) => {
               if (response.data.success) {
                 // send data to Socket.IO Server

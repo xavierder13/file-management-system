@@ -1,5 +1,6 @@
 import axios from 'axios';
 import router from '../../router';
+import apiBaseUrl from '../../apiBaseUrl';
 
 const state = {
   user: {},
@@ -10,7 +11,7 @@ const getters = {};
 
 const actions = {
   getUser({ commit }) {
-    axios.get("/api/auth/init").then(
+    axios.get(apiBaseUrl + "/api/auth/init").then(
       (response) => {
         commit('setUser', response.data.user);
       },

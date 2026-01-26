@@ -158,7 +158,7 @@ export default {
     getPermission() {
       this.loading = true;
 
-      axios.get("/api/role/create").then(
+      axios.get(this.$apiBaseUrl + "/api/role/create").then(
         (response) => {
           // console.log(response.data);
           this.permissions = response.data.permissions;
@@ -193,7 +193,7 @@ export default {
 
         const data = { name: this.editedItem.name, permission: this.permission};
 
-        axios.post("/api/role/store", data).then(
+        axios.post(this.$apiBaseUrl + "/api/role/store", data).then(
           (response) => {
             if (response.data.success) {
               // send data to Sockot.IO Server

@@ -219,7 +219,7 @@ export default {
   methods: {
     getRole() {
       this.loading = true;
-      axios.get("/api/role/index").then(
+      axios.get(this.$apiBaseUrl + "/api/role/index").then(
         (response) => {
           this.roles = response.data.roles;
           this.permissions = response.data.permissions;
@@ -261,7 +261,7 @@ export default {
     deleteRole(roleid) {
       const data = { roleid: roleid };
       this.loading = true;
-      axios.post("/api/role/delete", data).then(
+      axios.post(this.$apiBaseUrl + "/api/role/delete", data).then(
         (response) => {
           this.loading = false;
         },
@@ -343,7 +343,7 @@ export default {
         if (this.editedIndex > -1) {
           const roleid = this.editedRole.id;
 
-          axios.post("/api/role/update/" + roleid, data).then(
+          axios.post(this.$apiBaseUrl + "/api/role/update/" + roleid, data).then(
             (response) => {
               if (response.data.success) {
                 // send data to Sockot.IO Server
@@ -371,7 +371,7 @@ export default {
             }
           );
         } else {
-          axios.post("/api/role/store", data).then(
+          axios.post(this.$apiBaseUrl + "/api/role/store", data).then(
             (response) => {
               if (response.data.success) {
                 // send data to Sockot.IO Server

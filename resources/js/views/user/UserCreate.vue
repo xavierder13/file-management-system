@@ -197,7 +197,7 @@ export default {
 
   methods: {
     getRole() {
-      axios.get("/api/user/create").then(
+      axios.get(this.$apiBaseUrl + "/api/user/create").then(
         (response) => {
           this.roles = response.data.roles;
         },
@@ -232,7 +232,7 @@ export default {
 
         const data = this.editedItem;
 
-        axios.post("/api/user/store", data).then(
+        axios.post(this.$apiBaseUrl + "/api/user/store", data).then(
           (response) => {
             if (response.data.success) {
               // send data to Sockot.IO Server

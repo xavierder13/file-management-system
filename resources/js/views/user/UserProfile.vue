@@ -219,7 +219,7 @@ export default {
         const data = this.editedItem;
         const user_id = this.user.id;
 
-        axios.post("/api/user/update_profile/" + user_id, data).then(
+        axios.post(this.$apiBaseUrl + "/api/user/update_profile/" + user_id, data).then(
           (response) => {
             if (response.data.success) {
               // send data to Sockot.IO Server
