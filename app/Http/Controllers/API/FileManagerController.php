@@ -80,7 +80,7 @@ class FileManagerController extends Controller
             $file_date = Carbon::now()->format('Y-m-d');
             $uploadedFile = $request->file('file');
             $file_name = time().$uploadedFile->getClientOriginalName();
-            $file_path = '/wysiwyg/user_files/' . $file_date;
+            $file_path = '/user_files/' . $file_date;
 
             $uploadedFile->move(public_path() . $file_path, $file_name);
             
