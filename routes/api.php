@@ -100,106 +100,6 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:api', 'token.type:authT
 
 });
 
-//Exam 
-Route::group(['prefix' => 'exam', 'middleware' => ['auth:api', 'token.type:authToken', 'exam.maintenance']], function(){
-
-    Route::get('/index', [
-        'uses' => 'API\ExamController@index',
-        'as' => 'exam.index',
-    ]);
-
-    Route::post('/store', [
-        'uses' => 'API\ExamController@store',
-        'as' => 'exam.store',
-    ]);
-
-    Route::post('/update', [
-        'uses' => 'API\ExamController@update',
-        'as' => 'exam.update',
-    ]);
-
-    Route::post('/delete', [
-        'uses' => 'API\ExamController@delete',
-        'as' => 'exam.delete',
-    ]);
-
-});
-
-//Exam Question
-Route::group(['prefix' => 'exam_question', 'middleware' => ['auth:api', 'token.type:authToken', 'exam.question.maintenance']], function(){
-
-    Route::get('/index', [
-        'uses' => 'API\ExamQuestionController@index',
-        'as' => 'exam.question.index',
-    ]);
-
-    Route::post('/store', [
-        'uses' => 'API\ExamQuestionController@store',
-        'as' => 'exam.question.store',
-    ]);
-
-    Route::post('/update', [
-        'uses' => 'API\ExamQuestionController@update',
-        'as' => 'exam.question.update',
-    ]);
-    
-    Route::post('/delete', [
-        'uses' => 'API\ExamQuestionController@delete',
-        'as' => 'exam.question.delete',
-    ]);
-
-});
-
-//Exam Choice
-Route::group(['prefix' => 'exam_choice', 'middleware' => ['auth:api', 'token.type:authToken', 'exam.choice.maintenance']], function(){
-
-    Route::get('/index', [
-        'uses' => 'API\ExamChoiceController@index',
-        'as' => 'exam.choice.index',
-    ]);
-
-    Route::post('/store', [
-        'uses' => 'API\ExamChoiceController@store',
-        'as' => 'exam.choice.store',
-    ]);
-
-    Route::post('/update', [
-        'uses' => 'API\ExamChoiceController@update',
-        'as' => 'exam.choice.update',
-    ]);
-    
-    Route::post('/delete', [
-        'uses' => 'API\ExamChoiceController@delete',
-        'as' => 'exam.choice.delete',
-    ]);
-
-});
-
-//Exam Answer Sheet
-Route::group(['prefix' => 'exam_answer_sheet', 'middleware' => ['auth:api', 'token.type:authToken', 'exam.answer.sheet.maintenance']], function(){
-
-    Route::get('/index', [
-        'uses' => 'API\ExamAnswerSheetController@index',
-        'as' => 'exam.anawer.sheet.index',
-    ]);
-
-    Route::post('/store', [
-        'uses' => 'API\ExamAnswerSheetController@store',
-        'as' => 'exam.anawer.sheet.store',
-    ]);
-
-    Route::post('/update', [
-        'uses' => 'API\ExamAnswerSheetController@update',
-        'as' => 'exam.anawer.sheet.update',
-    ]);
-    
-    Route::post('/delete', [
-        'uses' => 'API\ExamAnswerSheetController@delete',
-        'as' => 'exam.anawer.sheet.delete',
-    ]);
-
-});
-
 //Permissions
 Route::group(['prefix' => 'permission', 'middleware' => ['auth:api', 'token.type:authToken', 'permission.maintenance']], function(){
     Route::get('/index', [
@@ -399,7 +299,7 @@ Route::group(['prefix' => 'division', 'middleware' => ['auth:api', 'division.mai
 });
 
 // File Explorer Routes
-Route::group(['prefix' => 'file-manager', 'middleware' => ['auth:api']], function () {
+Route::group(['prefix' => 'file-manager', 'middleware' => ['auth:api', 'file.manager.maintenance']], function () {
     Route::get('/index', [
         'uses' => 'API\FileManagerController@index',
         'as' => 'file.manager.index',

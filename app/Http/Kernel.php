@@ -72,5 +72,6 @@ class Kernel extends HttpKernel
         'position.maintenance' => \App\Http\Middleware\PositionMaintenance::class,
         'department.maintenance' => \App\Http\Middleware\DepartmentMaintenance::class,
         'division.maintenance' => \App\Http\Middleware\DivisionMaintenance::class,
+        'file.manager.maintenance' => \App\Http\Middleware\FileManagerMaintenance::class,
     ];
 }

@@ -73,12 +73,12 @@
       </v-list>
       <v-divider class="mt-0 pt-0"></v-divider>
       <v-list>
-        <v-list-item link to="/dashboard">
+        <!-- <v-list-item link to="/dashboard">
           <v-list-item-icon>
             <v-icon>mdi-view-dashboard</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Dashboard</v-list-item-title>
-        </v-list-item>
+        </v-list-item> -->
         <v-list-item link to="/file-explorer" v-if="hasPermission('file-explorer')">
           <v-list-item-icon>
             <v-icon>mdi-folder-open</v-icon>

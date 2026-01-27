@@ -7,20 +7,30 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use App\UserFile;
 use App\User;
+use App\Branch;
 use Carbon\Carbon;
 use DB;
 use Validator;
+use Auth;
 class FileManagerController extends Controller
 {
     public function index()
     {   
-        $user_files = UserFile::all()->map(function ($file) {
-            $file->date_modified = $file->updated_at
-                ->format('d/m/Y h:i A');
-            return $file;
-        });
+        $user = Auth::user();
+        $user_files = UserFile::with('branch')
+                              ->when($user->hasRole('File Explorer'), fn ($q) =>
+                                    $q->where('branch_id', $user->branch_id)
+                              )
+                              ->get()
+                              ->map(function ($file) {
+                                    $file->date_modified = $file->updated_at
+                                        ->format('m/d/Y h:i A');
+                                    return $file;
+                                });
 
-        return response()->json(['user_files' => $user_files], 200);
+        $branches = Branch::get()->sortBy('name')->values()->toArray();
+
+        return response()->json(['user_files' => $user_files, 'branches' => $branches], 200);
     }
 
     public function file_upload(Request $request)
@@ -53,6 +63,7 @@ class FileManagerController extends Controller
                 [   
                     'user_id' => 'required|integer',
                     'branch_id' => 'required|integer',
+                    'file_title' => 'requited',
                     'file_ext' => 'required|in:jpeg,jpg,png,docs,docx,pdf,xls,xlsx,ods,csv',
                     'file' => 'required|max: 20800'
                 ], 
@@ -61,6 +72,7 @@ class FileManagerController extends Controller
                     'user_id.integer' => 'User ID must be an integer',
                     'branch_id.required' => 'Branch ID is required',
                     'branch_id.integer' => 'Branch ID must be an integer',
+                    'file_title.required' => 'File Title is required',
                     'file.required' => 'File is required',
                     'file.max' => 'File size maximum is 20MB,',
                     'file_ext.required' => 'File extension is required',
@@ -90,7 +102,7 @@ class FileManagerController extends Controller
             $user_file->file_name = $file_name;
             $user_file->file_path = $file_path;
             $user_file->file_type = $file_extension;
-            $user_file->title = "User's File";
+            $user_file->title = $request->file_title;
             $user_file->save();
 
             return response()->json(['success' => 'File has been uploaded', 'user_file' => $user_file], 200);
@@ -123,25 +135,38 @@ class FileManagerController extends Controller
 		}
     }
 
-    public function delete(Request $request)
-    {
-        $file_id = $request->get('file_id');
-        $file = UserFile::find($file_id);
+    public function file_delete(Request $request)
+    {   
+        $deletedItems = $request->get('deleted_items', []); // always an array
+
+        if (empty($deletedItems)) {
+            return response()->json(['error' => 'No files selected'], 400);
+        }
         
-        //if record is empty then display error page
-        if(empty($file->id))
-        {
-            return abort(404, 'Not Found');
+        
+        $deletedItems = $request->get('deleted_items', []);
+
+        if (empty($deletedItems)) {
+            return response()->json(['error' => 'No files selected'], 400);
         }
 
-        $file->delete();
+        // Fetch all files at once
+        $files = UserFile::whereIn('id', $deletedItems)->get();
 
-        $file_path = $file->file_path;
+        foreach ($files as $file) {
+            $path = public_path($file->file_path . '/' . $file->file_name);
 
-        $path = public_path() . $file_path . "/" . $file->file_name;
-        unlink($path);
+            // Delete file from filesystem
+            if (file_exists($path)) {
+                unlink($path);
+            }
 
-        return response()->json(['success' => 'Record has been deleted'], 200);
+            // Delete database record
+            $file->delete();
+        }
+
+        return response()->json(['success' => $files->count() . ' file(s) deleted'], 200);
+      
     }
 
     public function validateToken($token) 
