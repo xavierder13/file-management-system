@@ -297,6 +297,9 @@ class UserController extends Controller
 
         // Create Passport QR token
         $tokenResult = $user->createToken('qrToken');
+        $token = $tokenResult->token;
+        // Expire after 1 week
+        $token->expires_at = now()->addWeek();
         $accessToken = $tokenResult->accessToken;
         $tokenModel  = $tokenResult->token;
 
@@ -316,11 +319,9 @@ class UserController extends Controller
         // Upload page URL
         $uploadUrl = config('app.url') . '/file-upload/' . $existingToken->id;
 
-        
-
         return response()->json([
             'qr_url' => $uploadUrl,
-            'expires_at' => $tokenModel->expires_at,
+            'expires_at' => $tokenModel->expires_at->format('m/d/Y g:iA'),
         ]);
     }
 
@@ -340,10 +341,10 @@ class UserController extends Controller
         // Check if a qrToken already exists and is not expired
         $existingToken = $user->tokens()
             ->where('name', 'qrToken')
-            ->where(function($query) {
-                $query->whereNull('expires_at')
-                    ->orWhere('expires_at', '>', now());
-            })
+            // ->where(function($query) {
+            //     $query->whereNull('expires_at')
+            //         ->orWhere('expires_at', '>', now());
+            // })
             ->latest() // get the latest one
             ->first();
 
@@ -357,9 +358,27 @@ class UserController extends Controller
 
         return response()->json([
             'qr_url' => $uploadUrl,
-            'expires_at' => $existingToken->expires_at,
+            'expires_at' => $existingToken->expires_at->format('m/d/Y g:iA'),
         ]);
     }
 
+    public function getUserUploader(Request $request) 
+    {
+         // Validate request
+        return $request;
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:users,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+        
+         $user = User::role('File Uploader')
+                    ->where('branch_id', $request->branch_id)
+                    ->first();
+
+        return response()->json(['user' => $user], 200);
+    }
 
 }

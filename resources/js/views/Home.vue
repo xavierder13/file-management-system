@@ -79,6 +79,12 @@
           </v-list-item-icon>
           <v-list-item-title>Dashboard</v-list-item-title>
         </v-list-item> -->
+        <v-list-item @click="viewQrCode()" v-if="hasAnyRole('File Explorer', 'Administrator')">
+          <v-list-item-icon>
+            <v-icon>mdi-qrcode-scan</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>QR Code</v-list-item-title>
+        </v-list-item>
         <v-list-item link to="/file-explorer" v-if="hasPermission('file-explorer')">
           <v-list-item-icon>
             <v-icon>mdi-folder-open</v-icon>
@@ -186,6 +192,8 @@
     <!-- Content -->
     <router-view />
 
+    <QrCode :user="user" ref="QrCode"/>
+
     <v-footer padless dense dark app>
       <v-col class="text-center" cols="12">
         Copyright © {{ new Date().getFullYear() }} —
@@ -203,8 +211,11 @@
 
 import axios from "axios";
 import { mapState, mapActions, mapGetters } from "vuex";
-
+import QrCode from './components/QrCode.vue';
 export default {
+  components:{
+    QrCode
+  },
   data() {
     return {
       absolute: true,
@@ -238,7 +249,7 @@ export default {
     },
     logout() {
       this.overlay = true;
-      axios.get("/api/auth/logout").then(
+      axios.get(this.$apiBaseUrl + "/api/auth/logout").then(
         (response) => {
           if (response.data.success) {
             this.overlay = false;
@@ -294,6 +305,20 @@ export default {
 
       // this.logout();
     },
+    viewQrCode() {
+      this.$refs.QrCode.viewQrCode();
+    },
+    getUserUploader() {
+      axios.post(this.$apiBaseUrl + '/api/user/get-user-uploader', this.user).then(
+        (response) => {
+          // console.log(response)
+        },
+        (error) => {
+          console.log(error);
+          
+        }
+      )
+    },
     ...mapActions("auth", ["getUser"]),
     ...mapActions("userRolesPermissions", ["userRolesPermissions"]),
 
@@ -304,13 +329,16 @@ export default {
 			return this.$store.state.idleVue.isIdle;
 		},
     ...mapState("auth", ["user"]),
-    ...mapGetters("userRolesPermissions", ["hasRole", "hasPermission"]),
+    ...mapGetters("userRolesPermissions", ["hasRole", "hasAnyRole", "hasPermission"]),
   },
   watch: {
     isIdle(){
-      // if (this.isIdle) {
-      //   this.sessionExpiredSwal();
-      // }
+      if (this.isIdle) {
+        this.sessionExpiredSwal();
+      }
+    },
+    user() {
+      this.getUserUploader();
     }
   },
 

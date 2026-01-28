@@ -127,14 +127,33 @@ export default {
   },
   methods: {
     validateToken() {
+      console.log(`${this.$apiBaseUrl}/api/validate-token/${this.token}`);
+      
       axios.get(`${this.$apiBaseUrl}/api/validate-token/${this.token}`)
-        .then(res => {
+        .then(response => {
+          let data = response.data;
+          console.log(data);
+          
           this.valid = true;
-          this.user_id = res.data.user_id;
-          this.branch_id = res.data.branch_id;
-        })
-        .catch(() => { this.valid = false; })
-        .finally(() => { this.loading = false; });
+          this.user_id = data.user_id;
+          this.branch_id = data.branch_id;
+        },
+        (error) => {
+          console.log(error);
+          
+          let res = error.response;
+          if(res.status == 401) 
+          {
+            window.location.href = this.$apiBaseUrl + '/401';
+          }
+          else if(res.status == 404) 
+          {
+            window.location.href = this.$apiBaseUrl + '/404';
+          }
+        }
+      )
+        // .catch(() => { this.valid = false; })
+        // .finally(() => { this.loading = false; });
     },
     browse() {
       this.$refs.fileInput.click();

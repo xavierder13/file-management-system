@@ -28,7 +28,7 @@ class CheckTokenType
         $accessToken = $user->token();
 
         if (!$accessToken || $accessToken->name !== $tokenName) {
-            return response()->json(['message' => 'Invalid token type.'], 403);
+            return response()->json(['message' => 'Invalid token type.'], 401);
         }
 
         return $next($request);

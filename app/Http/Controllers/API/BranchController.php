@@ -54,6 +54,8 @@ class BranchController extends Controller
         $branch->company_id = $request->get('company_id');
         $branch->save();
 
+        $branch = Branch::with('company')->find($branch->id);
+
         return response()->json(['success' => 'Record has successfully added', 'branch' => $branch], 200);
     }
 

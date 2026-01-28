@@ -64,7 +64,7 @@ class UserMaintenance
         }
 
         //View Token
-        if($request->is('api/user/view-qr-token')){
+        if($request->is('api/user/view-qr-token') || $request->is('api/user/get-user-uploader')){
             if($user->can('qr-token-create')){
                 return $next($request); 
             }
