@@ -403,10 +403,7 @@
             </template>
           </v-data-table>
         </v-card>
-        <QrCode
-          :user="userItem"
-          ref="QrCode"
-        />
+        <QrCode :user="userItem" ref="QrCode"/>
       </v-main>
     </div>
   </div>
@@ -540,6 +537,7 @@ export default {
       indeterminate: false,
       roleComponentKey: -1,
       userItem: {},
+      qrComponentKey: 1,
     };
   },
 
@@ -783,8 +781,9 @@ export default {
     },
     async viewQrCode(item) {
       
-      this.userItem = Object.assign({}, item);
-      this.$refs.QrCode.viewQrCode();
+      this.userItem = await Object.assign({}, item);
+      
+      await this.$refs.QrCode.viewQrCode(item);
     },
     isUnauthorized(error) {
       // if unauthenticated (401)

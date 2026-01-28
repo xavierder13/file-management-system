@@ -306,7 +306,7 @@ export default {
       // this.logout();
     },
     viewQrCode() {
-      this.$refs.QrCode.viewQrCode();
+      this.$refs.QrCode.viewQrCode(this.user);
     },
     getUserUploader() {
       axios.post(this.$apiBaseUrl + '/api/user/get-user-uploader', this.user).then(

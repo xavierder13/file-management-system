@@ -17,7 +17,7 @@
           <span :class="(isQrExpired ? 'red--text text--darken-2' : '') + 'subtitle-1'">
             (Expiration: <strong>{{ expires_at }}</strong>)
           </span>
-          <div ref="qrContainer" v-html="qr_code" :key="qrComponentKey"></div>
+          <div ref="qrContainer" v-html="qr_code"></div>
         </template>
         <div v-if="!qr_code" style="display: inline-block; width: 350px; height: 300px; border: 1px solid #ccc; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
           <span style="color: #999;" class="font-weight-bold subtitle-1">Please generate QR Code</span>
@@ -38,25 +38,25 @@ import axios from "axios";
 import QRCode from 'qrcode';
 
 export default {
-  props: ['user'],
   data() {
     return {
       dialog_qr_code: false,
       qr_code: "",
       qr_url: "",
       qr_expiration: "",
-      qrComponentKey: 1,
       expires_at: "",
+      userItem: {},
     };
   },
 
   methods: {
-    async viewQrCode() {
+    async viewQrCode(item) {
+      this.userItem = item;
       this.dialog_qr_code = true; 
       this.qr_code = ''; 
       
       try {
-        const response = await axios.post(this.$apiBaseUrl + '/api/user/view-qr-token', this.user);
+        const response = await axios.post(this.$apiBaseUrl + '/api/user/view-qr-token', this.userItem);
         this.qr_url = response.data.qr_url;
         this.expires_at = response.data.expires_at;
         console.log(this.qr_url);
@@ -77,7 +77,7 @@ export default {
     async generateQrCode() {
       const generateQr = async () => {
         try {
-          const response = await axios.post(this.$apiBaseUrl + '/api/user/generate-qr-token', this.user);
+          const response = await axios.post(this.$apiBaseUrl + '/api/user/generate-qr-token', this.userItem);
           console.log(response.data);
           
           this.qr_url = await response.data.qr_url;
