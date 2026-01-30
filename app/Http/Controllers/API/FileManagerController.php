@@ -54,31 +54,24 @@ class FileManagerController extends Controller
             $file_extension = $file->getClientOriginalExtension();
 
             $validator = Validator::make(
-                [       
-                    'user_id' => $user_id,
-                    'branch_id' => $branch_id,
-                    'file_ext' => strtolower($file_extension),
-                    'file' => $file,
+                [
+                    'user_id'    => $user_id,
+                    'branch_id'  => $branch_id,
+                    'file_title' => $request->file_title,
+                    'file_ext'   => $file_extension,
+                    'file'       => $file,
                 ],
-                [   
-                    'user_id' => 'required|integer',
-                    'branch_id' => 'required|integer',
-                    'file_title' => 'requited',
-                    'file_ext' => 'required|in:jpeg,jpg,png,docs,docx,pdf,xls,xlsx,ods,csv',
-                    'file' => 'required|max: 20800'
-                ], 
-                [   
-                    'user_id.required' => 'User ID is required',
-                    'user_id.integer' => 'User ID must be an integer',
-                    'branch_id.required' => 'Branch ID is required',
-                    'branch_id.integer' => 'Branch ID must be an integer',
-                    'file_title.required' => 'File Title is required',
-                    'file.required' => 'File is required',
-                    'file.max' => 'File size maximum is 20MB,',
-                    'file_ext.required' => 'File extension is required',
-                    'file_ext.in' => 'File type must be jpeg, jpg, png, docs, docx, ods, csv, xlsx, pdf.',
+                [
+                    'user_id'    => 'required|integer',
+                    'branch_id'  => 'required|integer',
+                    'file_title' => 'required|string|max:255',
+                    'file_ext'   => 'required|in:jpeg,jpg,png,doc,docx,pdf,xls,xlsx,ods,csv,mp4,mov,avi,mkv,webm',
+                    'file' => 'required|max:20480|mimes:jpeg,jpg,png,doc,docx,pdf,xls,xlsx,ods,csv,mp4,mov,avi,mkv,webm',
+                ],
+                [
+                    'file_ext.in' => 'File type must be image, document, or video (mp4, mov, avi, mkv, webm).',
                 ]
-            );  
+            );
             
             if($validator->fails())
             {

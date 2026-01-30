@@ -27,6 +27,9 @@
             <v-icon large class="mb-2">mdi-cloud-upload-outline</v-icon>
             <h3>Select your files</h3>
             <p>Accepted file types: {{ acceptedExtensions.replace(/,/g, ', ') }}</p>
+            <p class="grey--text text--darken-1 text-caption mb-3">
+              Max size: 20MB • Images, Documents & Videos supported
+            </p>
             <v-btn color="primary" class="mt-2">Browse</v-btn>
           </div>
         </div>
@@ -104,14 +107,21 @@ export default {
       files: [],
       file_title: '', // new title input   
       acceptedFiles: {
-        pdf: { icon: 'mdi-file-pdf' },
-        ods: { icon: 'mdi-file-excel' },
-        xls: { icon: 'mdi-file-excel' },
+        pdf:  { icon: 'mdi-file-pdf' },
+        ods:  { icon: 'mdi-file-excel' },
+        xls:  { icon: 'mdi-file-excel' },
         xlsx: { icon: 'mdi-file-excel' },
-        doc: { icon: 'mdi-file-word' },
+        doc:  { icon: 'mdi-file-word' },
         docx: { icon: 'mdi-file-word' },
-        jpg: { icon: 'mdi-file-image' },
-        png: { icon: 'mdi-file-image' }
+        jpg:  { icon: 'mdi-file-image' },
+        png:  { icon: 'mdi-file-image' },
+
+        // 🎥 VIDEO
+        mp4:  { icon: 'mdi-file-video' },
+        mov:  { icon: 'mdi-file-video' },
+        avi:  { icon: 'mdi-file-video' },
+        mkv:  { icon: 'mdi-file-video' },
+        webm:{ icon: 'mdi-file-video' },
       },
       loading: false,
     };

@@ -275,6 +275,13 @@ export default {
         docx: { icon: 'mdi-file-word', color: 'blue' },
         jpg: { icon: 'mdi-file-image', color: 'secondary' },
         png: { icon: 'mdi-file-image', color: 'secondary' },
+
+        // 🎥 VIDEO
+        mp4:  { icon: 'mdi-file-video', color: 'teal' },
+        mov:  { icon: 'mdi-file-video', color: 'teal' },
+        avi:  { icon: 'mdi-file-video', color: 'teal' },
+        mkv:  { icon: 'mdi-file-video', color: 'teal' },
+        webm:{ icon: 'mdi-file-video', color: 'teal' },
       }
       return map[type] || 'mdi-file'
     },
