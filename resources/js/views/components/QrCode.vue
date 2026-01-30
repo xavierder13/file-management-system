@@ -13,6 +13,20 @@
       <v-divider class="mt-0 pt-0"></v-divider>
       <v-card-text class="text-center">
         <!-- QR code SVG -->
+         <div v-if="qr_url" class="mb-3">
+          <v-chip
+            color="primary"
+            outlined
+            class="px-4"
+            @click="openQrLink()"
+            style="cursor: pointer; max-width: 100%;"
+          >
+            <v-icon left small>mdi-link</v-icon>
+            <span class="text-truncate" style="max-width: 260px;">
+              {{ qr_url }}
+            </span>
+          </v-chip>
+        </div>
         <template v-if="qr_code">
           <span :class="(isQrExpired ? 'red--text text--darken-2' : '') + 'subtitle-1'">
             (Expiration: <strong>{{ expires_at }}</strong>)
@@ -125,6 +139,11 @@ export default {
       link.download = 'qr-code.svg';
       link.click();
       URL.revokeObjectURL(url);
+    },
+    openQrLink() {
+ 
+      window.open(this.qr_url, '_blank');
+      
     },
     isUnauthorized(error) {
       // if unauthenticated (401)

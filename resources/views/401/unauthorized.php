@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>404 Not Found</title>
+  <title>401 Unauthorized</title>
 
   <!-- Optional: Font -->
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400&display=swap" rel="stylesheet">

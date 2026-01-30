@@ -1,5 +1,9 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import store from './store'; // import your Vuex store
+import apiBaseUrl from './apiBaseUrl';
+import axiosMain from './axiosMain';
+
 import Home from './views/Home.vue';
 import Login from './auth/Login.vue';
 import Dashboard from './views/dashboard/Dashboard.vue';
@@ -32,17 +36,20 @@ const routes = [
       {
         path: '/dashboard',
         name: 'dashboard',
-        component: Dashboard
+        component: Dashboard,
+        meta: { requiresAuth: true, permission: 'dashboard' }
       },
       {
         path: '/user/index',
         name: 'user.index',
-        component: UserIndex
+        component: UserIndex,
+        meta: { requiresAuth: true, permission: 'user-list' }
       },
       {
         path: '/user/create',
         name: 'user.create',
-        component: UserCreate
+        component: UserCreate,
+        meta: { requiresAuth: true, permission: 'user-create' }
       },
       {
         path: '/user/profile',
@@ -52,87 +59,82 @@ const routes = [
       {
         path: '/permission/index',
         name: 'permission.index',
-        component: Permission
+        component: Permission,
+        meta: { requiresAuth: true, permission: 'permission-list' }
       },
       {
         path: '/role/index',
         name: 'role.index',
-        component: RoleIndex
+        component: RoleIndex,
+        meta: { requiresAuth: true, permission: 'role-list' }
       },
       {
         path: '/role/create',
         name: 'role.create',
-        component: RoleCreate
+        component: RoleCreate,
+        meta: { requiresAuth: true, permission: 'role-create' }
       },
       {
         path: '/role/view/:roleid',
         name: 'role.view',
-        component: RoleView
+        component: RoleView,
+        meta: { requiresAuth: true, permission: 'role-edit' }
       },
       {
         path: '/branch/index',
         name: 'branch.index',
-        component: BranchIndex
+        component: BranchIndex,
+        meta: { requiresAuth: true, permission: 'branch-list' }
       },
       {
         path: '/company/index',
         name: 'company.index',
-        component: CompanyIndex
+        component: CompanyIndex,
+        meta: { requiresAuth: true, permission: 'company-list' }
       },
       {
         path: '/position/index',
         name: 'position.index',
-        component: PositionIndex
+        component: PositionIndex,
+        meta: { requiresAuth: true, permission: 'position-list' }
       },
       {
         path: '/department/index',
         name: 'department.index',
-        component: DepartmentIndex
+        component: DepartmentIndex,
+        meta: { requiresAuth: true, permission: 'department-list' }
       },
       {
         path: '/division/index',
         name: 'division.index',
-        component: DivisionIndex
+        component: DivisionIndex,
+        meta: { requiresAuth: true, permission: 'division-list' }
       },
       {
         path: '/file-explorer',
         name: 'file.explorer',
-        component: FileExplorer
+        component: FileExplorer,
+        meta: { requiresAuth: true, permission: 'file-list' }
       },
       {
         path: '/activity_logs',
         name: 'activity_logs',
-        component: ActivityLogs
+        component: ActivityLogs,
+        meta: { requiresAuth: true, permission: 'activity-logs' }
       },
       {
         path: '/unauthorize',
         name: 'unauthorize',
         component: Unauthorize,
+        meta: { requiresAuth: true, permission: '' }
       }
     ],
-    beforeEnter(to, from, next) {
-
-      if (localStorage.getItem('access_token')) {
-        next();
-      }
-      else {
-        next('/login');
-      }
-    }
   },
   {
     path: '/login',
     name: 'login',
-    component: Login,
-    beforeEnter(to, from, next) {
-      
-      if (localStorage.getItem('access_token')) {
-        next('/');
-      }
-      else {
-        next();
-      }
-    }
+    component: Login, 
+    meta: { public: true, onlyGuest: true }
   },
   {
     path: '*',
@@ -141,13 +143,69 @@ const routes = [
   {
     path: '/file-upload/:token',
     name: 'file.upload',
-    component: FileUpload
+    component: FileUpload,
+    meta: { public: true },
+    beforeEnter: async (to, from, next) => {
+      const qrToken = to.params.token;
+
+      try {
+        // Await the API call
+        const response = await axiosMain.get(`/api/validate-qr-token/${qrToken}`);
+        
+        // Token is valid, allow the page to load
+        next();
+      } catch (error) {
+        // Hide backend console errors
+        const status = error.response?.status;
+
+        if (status === 401) {
+          window.location.href = apiBaseUrl + '/401';
+        } else if (status === 404) {
+          window.location.href = apiBaseUrl + '/404';
+        } else {
+          window.location.href = apiBaseUrl + '/500';
+        }
+      }
+    }
   },
 ];
 
 const router = new Router({
   routes: routes,
   mode: 'history',
+});
+
+// ✅ Global auth + permission guard
+router.beforeEach(async (to, from, next) => {
+  const token = localStorage.getItem('access_token');
+  
+  if (to.meta.public) {
+    // Only redirect logged-in users if the page is meant for guests
+    if (token && to.meta.onlyGuest) {
+      return next({ name: 'dashboard' });
+    }
+    return next(); // allow public route
+  }
+
+  // Protected route → requires auth
+  if (to.meta.requiresAuth && !token) {
+    return next('/login');
+  }
+
+  // load user + roles/permissions if not loaded
+  if (!store.state.auth.isLoaded) {
+    await store.dispatch('auth/getUser');
+  }
+
+  if (to.meta.permission && !store.getters['auth/hasPermission'](to.meta.permission)) {
+    return next({ name: 'unauthorize' });
+  }
+
+  if (to.meta.role && !store.getters['auth/hasRole'](to.meta.role)) {
+    return next({ name: 'unauthorize' });
+  }
+
+  next();
 });
 
 export default router;

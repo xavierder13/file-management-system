@@ -1,45 +1,54 @@
+// store/modules/auth.js
 import axios from 'axios';
 import router from '../../router';
 import apiBaseUrl from '../../apiBaseUrl';
 
 const state = {
-  user: {},
-  userIsLoaded: false,
+  user: null,
+  roles: [],
+  permissions: [],
+  isLoaded: false,
 };
 
-const getters = {};
+const getters = {
+  hasRole: (state) => (...role) => role.every(r => state.roles.includes(r)),
+  hasAnyRole: (state) => (...role) => role.some(r => state.roles.includes(r)),
+  hasPermission: (state) => (...permission) => permission.every(p => state.permissions.includes(p)),
+  hasAnyPermission: (state) => (...permission) => permission.some(p => state.permissions.includes(p)),
+};
 
 const actions = {
-  getUser({ commit }) {
-    axios.get(apiBaseUrl + "/api/auth/init").then(
-      (response) => {
-        commit('setUser', response.data.user);
-      },
-      (error) => {
-        // if unauthenticated (401)
-        if (error.response.status == "401") {
-          localStorage.removeItem("access_token");
-          router.push('/login');
-        }
-      }
-    );
-  },
-  
-};
+  async getUser({ commit }) {
+    const token = localStorage.getItem('access_token');
+    if (!token) return router.push('/login');
 
-const mutations = {
-  setUser(state, data) {
-    state.user = data;
+    try {
+      const userResp = await axios.get(apiBaseUrl + '/api/auth/init', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-    // set true if user value successfully assigned
-    state.userIsLoaded = true;
+      commit('setUser', userResp.data.user);
+
+      const rolesPermResp = await axios.get(apiBaseUrl + '/api/user/roles_permissions', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      commit('setRoles', rolesPermResp.data.user_roles);
+      commit('setPermissions', rolesPermResp.data.user_permissions);
+      commit('setLoaded', true);
+
+    } catch (error) {
+      localStorage.removeItem('access_token');
+      router.push('/login');
+    }
   }
 };
 
-export default {
-  namespaced: true,
-  state,
-  getters,
-  actions,
-  mutations,
-}
+const mutations = {
+  setUser(state, user) { state.user = user; },
+  setRoles(state, roles) { state.roles = roles; },
+  setPermissions(state, permissions) { state.permissions = permissions; },
+  setLoaded(state, val) { state.isLoaded = val; }
+};
+
+export default { namespaced: true, state, getters, actions, mutations };

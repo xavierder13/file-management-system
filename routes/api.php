@@ -39,7 +39,7 @@ Route::prefix('auth')->group(function(){
 
 // protected token type by authToken
 Route::group(['middleware' => ['auth:api', 'token.type:authToken']], function(){
-    Route::middleware('auth:api')->get('/user', function (Request $request) {
+    Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
@@ -344,7 +344,7 @@ Route::post('/file-upload', [
 ]);
 
 // validate token
-Route::get('/validate-token/{token}', [
+Route::get('/validate-qr-token/{token}', [
     'uses' => 'API\FileManagerController@validateToken',
     'as' => 'file.manager.validateToken', 
 ]);

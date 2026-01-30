@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import Axios from "axios";
+import axios from "axios";
 import { validationMixin } from "vuelidate";
 import { required, maxLength, email } from "vuelidate/lib/validators";
 
@@ -106,30 +106,34 @@ export default {
     },
   },
   methods: {
-    login() {
+    async login() {
       this.$v.$touch();
 
       if (!this.$v.$error) {
         this.overlay = true;
         const email = this.email;
         const password = this.password;
-        const data = { email: email, password: password };
+        const data = { email, password };
 
-        Axios.post("/api/auth/login", data).then(
-          (response) => {
-            if (response.data.access_token) {
-              localStorage.setItem("access_token", response.data.access_token);
-              this.$router.push("/").catch((e) => {});
-              this.clear();
-            } else {
-              this.isInvalid = true;
-              this.overlay = false;
-            }
-          },
-          (error) => {
-            console.log(error);
+        try {
+          const response = await axios.post(this.$apiBaseUrl + "/api/auth/login", data);
+
+          if (response.data.access_token) {
+            localStorage.setItem("access_token", response.data.access_token);
+
+            // // ✅ now await works
+            await this.$store.dispatch('auth/getUser');
+
+            await this.$router.push("/").catch(() => {});
+            this.clear();
+          } else {
+            this.isInvalid = true;
+            this.overlay = false;
           }
-        );
+        } catch (error) {
+          console.log(error);
+          this.overlay = false;
+        }
       }
     },
 

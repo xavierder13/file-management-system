@@ -91,7 +91,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axiosMain from '../../axiosMain';
 
 export default {
   data() {
@@ -127,33 +127,34 @@ export default {
   },
   methods: {
     validateToken() {
-      console.log(`${this.$apiBaseUrl}/api/validate-token/${this.token}`);
       
-      axios.get(`${this.$apiBaseUrl}/api/validate-token/${this.token}`)
-        .then(response => {
-          let data = response.data;
-          console.log(data);
-          
-          this.valid = true;
-          this.user_id = data.user_id;
-          this.branch_id = data.branch_id;
-        },
-        (error) => {
-          console.log(error);
-          
-          let res = error.response;
-          if(res.status == 401) 
-          {
-            window.location.href = this.$apiBaseUrl + '/401';
-          }
-          else if(res.status == 404) 
-          {
-            window.location.href = this.$apiBaseUrl + '/404';
-          }
+      axiosMain.get(`/api/validate-qr-token/${this.token}`)
+      .then(response => {
+        const data = response.data;
+
+        this.valid = true;
+        this.user_id = data.user_id;
+        this.branch_id = data.branch_id;
+      })
+      .catch(error => {
+        // Hide console logs from backend
+        const status = error.response?.status;
+
+        if (status === 401) {
+          window.location.href = this.$apiBaseUrl + '/401';
+        } else if (status === 404) {
+          window.location.href = this.$apiBaseUrl + '/404';
+        } else {
+          // fallback for other errors
+          window.location.href = this.$apiBaseUrl + '/500';
         }
-      )
-        // .catch(() => { this.valid = false; })
-        // .finally(() => { this.loading = false; });
+
+        // prevent further error propagation
+        this.valid = false;
+      })
+      .finally(() => {
+        this.loading = false;
+      });
     },
     browse() {
       this.$refs.fileInput.click();
@@ -194,7 +195,7 @@ export default {
       this.loading = true;  
 
       try {
-        const res = await axios.post(`${this.$apiBaseUrl}/api/file-upload`, form, {
+        const res = await axiosMain.post(`/api/file-upload`, form, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         console.log(res);

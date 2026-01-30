@@ -433,7 +433,7 @@
   }
 </style>
 <script>
-import axios from "axios";
+import axiosMain from '../../axiosMain';
 import { validationMixin } from "vuelidate";
 import {
   required,
@@ -544,7 +544,7 @@ export default {
   methods: {
     getUser() {
       this.loading = true;
-      axios.get(this.$apiBaseUrl + "/api/user/index").then(
+      axiosMain.get("/api/user/index").then(
         (response) => {
           let data = response.data;
 
@@ -581,7 +581,7 @@ export default {
     deleteUser(user_id) {
       const data = { user_id: user_id };
 
-      axios.post(this.$apiBaseUrl + "/api/user/delete", data).then(
+      axiosMain.post("/api/user/delete", data).then(
         (response) => {
           if (response.data.success) {
             // send data to Sockot.IO Server
@@ -671,7 +671,7 @@ export default {
           const data = this.editedItem;
           const user_id = this.editedItem.id;
 
-          axios.post(this.$apiBaseUrl + "/api/user/update/" + user_id, data).then(
+          axiosMain.post("/api/user/update/" + user_id, data).then(
             (response) => {
               if (response.data.success) {
                 // send data to Sockot.IO Server
@@ -704,7 +704,7 @@ export default {
 
           const data = this.editedItem;
 
-          axios.post(this.$apiBaseUrl + "/api/user/store", data).then(
+          axiosMain.post("/api/user/store", data).then(
             (response) => {
               if (response.data.success) {
                 // send data to Sockot.IO Server
@@ -932,8 +932,6 @@ export default {
     }
   },
   mounted() {
-    axios.defaults.headers.common["Authorization"] =
-      "Bearer " + localStorage.getItem("access_token");
     this.getUser();
     // this.websocket();
   },

@@ -256,6 +256,7 @@ export default {
 
             // remove all local storage including access_token
             window.localStorage.clear();
+            this.$store.commit("auth/setUser", {}); // clear user
             this.$router.push("/login").catch(() => {});
           }
         },
@@ -346,7 +347,7 @@ export default {
     axios.defaults.headers.common["Authorization"] =
       "Bearer " + localStorage.getItem("access_token");
     this.userRolesPermissions();
-    this.getUser();
+    // this.getUser();
     // this.websocket();
 
   },
